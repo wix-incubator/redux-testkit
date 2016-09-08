@@ -81,5 +81,13 @@ export function name_of_function() {
 }
 ```
 
+To test a **synchronous** action that dispacthes other actions or objects, you should inject the `mockDispatch()` and `getState()` from the mockStore. For example:
+
+```
+const result = actions.syncAction(mockStore.mockDispatch, mockStore.getState(), params...);
+expect(result).toEqual(123456);
+expect(mockStore.getActions()).to....
+```
+
 ## TODO
 [ ] Improve syntax with Matchers - Please open issues to suggest the syntax you'd want!
