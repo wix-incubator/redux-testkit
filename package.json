@@ -4,7 +4,7 @@
   "description": "Test kit for redux",
   "main": "lib/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": ":",
     "compile": "babel --presets react-native -d lib/ src/"
   },
   "author": "Yedidya Kennard <yedidyak@gmail.com>",
