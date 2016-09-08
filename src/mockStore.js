@@ -4,7 +4,7 @@ export default class MockStore {
 
   constructor() {
     this.reset();
-    this.innerDispatch = this.innerDispatch.bind(this);
+    this.mockDispatch = this.mockDispatch.bind(this);
   }
 
   reset() {
@@ -22,15 +22,21 @@ export default class MockStore {
 
   dispatchSync(action) {
     let done = false;
-    action(this.innerDispatch, this.getState).then(() => done = true);
+    let result;
+    action(this.mockDispatch, this.getState).then((r) => {
+      result = r;
+      done = true;
+    });
     require('deasync').loopWhile(() => !done);
+    //require('deasync').sleep(100);
+    return result;
   }
 
   dispatch(action) {
-    action();
+    return action();
   }
 
-  innerDispatch(action) {
+  mockDispatch(action) {
     if (_.isFunction(action)) {
       this.actions = [...this.actions, action.name];
     } else if (_.has(action, 'type')) {
@@ -44,5 +50,4 @@ export default class MockStore {
   getActions() {
     return this.actions;
   }
-
 }
