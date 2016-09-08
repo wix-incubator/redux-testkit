@@ -1,5 +1,5 @@
 # redux-testkit
-##Testkit for redux thunks
+##Testkit for redux actions (thunks or otherwise)
 
 ### Installation
 
