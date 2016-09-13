@@ -2,21 +2,37 @@
   "name": "redux-testkit",
   "version": "0.1.0",
   "description": "Test kit for redux",
-  "main": "lib/index.js",
-  "scripts": {
-    "test": ":",
-    "compile": "babel --presets react-native -d lib/ src/"
-  },
   "author": "Yedidya Kennard <yedidyak@gmail.com>",
   "license": "MIT",
-  "dependencies": {
-    "deasync": "^0.1.7"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/wix/redux-testkit.git"
   },
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "node jasmineUnitRunner",
+    "build": "rm -rf lib && babel src --presets react-native -d lib"
+  },
+  "dependencies": {
+    "lodash": "^4.0.0",
+    "deasync": "^0.1.7"
+  },
   "devDependencies": {
-    "babel-preset-react-native": "^1.9.0"
+    "app-root-path": "^1.0.0",
+    "babel-cli": "^6.8.0",
+    "babel-core": "^6.8.0",
+    "babel-polyfill": "^6.8.0",
+    "babel-register": "^6.8.0",
+    "babel-preset-react-native": "^1.9.0",
+    "jasmine": "2.4.1",
+    "jasmine-reporters": "^2.1.1",
+    "jasmine-spec-reporter": "^2.4.0",
+    "jasmine-expect": "^2.0.2",
+    "proxyquire": "1.7.4",
+    "eslint": "^2.5.1",
+    "eslint-plugin-babel": "^3.0.0",
+    "eslint-plugin-react": "^4.2.3",
+    "eslint-plugin-react-native": "^1.0.0",
+    "babel-eslint": "^6.0.4"
   }
 }
