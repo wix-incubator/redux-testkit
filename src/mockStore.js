@@ -42,7 +42,7 @@ export default class MockStore {
     } else if (_.has(action, 'type')) {
       this.actions = [...this.actions, action];
     } else {
-      throw ('Unsupported action type sent to dispatch');
+      throw new Error('Unsupported action type sent to dispatch');
     }
     return true;
   }

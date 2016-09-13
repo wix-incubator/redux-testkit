@@ -10,6 +10,8 @@
   },
   "main": "lib/index.js",
   "scripts": {
+    "lint": "eslint src test",
+    "pretest": "npm run lint",
     "test": "node jasmineUnitRunner",
     "build": "rm -rf lib && babel src --presets react-native -d lib"
   },
