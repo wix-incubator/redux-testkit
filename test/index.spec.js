@@ -1,8 +1,8 @@
 import 'jasmine-expect';
-import {MockStore} from './../lib/index';
+import {ActionTest} from './../lib/index';
 
 describe('index', () => {
-  it('exposes MockStore', () => {
-    expect(MockStore).toBeDefined();
+  it('exposes ActionTest', () => {
+    expect(ActionTest).toBeDefined();
   });
 });
