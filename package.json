@@ -1,6 +1,6 @@
 {
   "name": "redux-testkit",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Test kit for redux",
   "author": "Yedidya Kennard <yedidyak@gmail.com>",
   "license": "MIT",
