@@ -27,19 +27,24 @@ export class ActionTest {
     let done = false;
     let finalResult;
     let error;
-    const result = action(this.mockDispatch, this.getState);
 
-    if (result instanceof Promise) {
-      result.then((r) => {
-        finalResult = r;
-        done = true;
-      }).catch((e) => {
-        error = e;
-        done = true;
-      });
-      require('deasync').loopWhile(() => !done);
+    if (_.isFunction(action)) {
+      const result = action(this.mockDispatch, this.getState);
+
+      if (result instanceof Promise) {
+        result.then((r) => {
+          finalResult = r;
+          done = true;
+        }).catch((e) => {
+          error = e;
+          done = true;
+        });
+        require('deasync').loopWhile(() => !done);
+      } else {
+        finalResult = result;
+      }
     } else {
-      finalResult = result;
+      finalResult = action;
     }
 
     if (error) {
