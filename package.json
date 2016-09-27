@@ -8,12 +8,12 @@
     "type": "git",
     "url": "https://github.com/wix/redux-testkit.git"
   },
-  "main": "lib/index.js",
+  "main": "dist/index.js",
   "scripts": {
+    "build": "rm -rf dist && babel src --presets react-native -d dist",
     "lint": "eslint src test",
     "pretest": "npm run lint",
-    "test": "node jasmineUnitRunner",
-    "build": "rm -rf lib && babel src --presets react-native -d lib"
+    "test": "node jasmineUnitRunner"
   },
   "dependencies": {
     "lodash": "^4.0.0",

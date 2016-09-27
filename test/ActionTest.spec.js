@@ -1,11 +1,11 @@
 import 'jasmine-expect';
-import MockStore from '../src/mockStore';
+import {ActionTest} from '../src/ActionTest';
 
-describe('mockStore', () => {
+describe('ActionTest', () => {
   let uut = null;
 
   beforeEach(() => {
-    uut = new MockStore();
+    uut = new ActionTest();
   });
 
   it('can be constructed', () => {
@@ -17,7 +17,7 @@ describe('mockStore', () => {
   });
 
   it('starts with empty actions', () => {
-    expect(uut.getActions()).toEqual([]);
+    expect(uut.getDispatched()).toEqual([]);
   });
 
   it('holds state', () => {
@@ -27,9 +27,9 @@ describe('mockStore', () => {
 
   it('can be reset', () => {
     uut.setState({a: 123, b: 456});
-    uut.getActions().push('hello');
+    uut.getDispatched().push('hello');
     uut.reset();
     expect(uut.getState()).toEqual({});
-    expect(uut.getActions()).toEqual([]);
+    expect(uut.getDispatched()).toEqual([]);
   });
 });
