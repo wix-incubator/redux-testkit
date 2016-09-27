@@ -10,10 +10,10 @@
   },
   "main": "lib/index.js",
   "scripts": {
+    "build": "rm -rf lib && babel src --presets react-native -d lib",
     "lint": "eslint src test",
     "pretest": "npm run lint",
-    "test": "node jasmineUnitRunner",
-    "build": "rm -rf lib && babel src --presets react-native -d lib"
+    "test": "node jasmineUnitRunner"
   },
   "dependencies": {
     "lodash": "^4.0.0",

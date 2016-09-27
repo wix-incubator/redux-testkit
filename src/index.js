@@ -1,3 +1,3 @@
-import MockStore from './mockStore';
+import {ActionTest} from './ActionTest';
 
-module.exports = {MockStore};
+module.exports = {ActionTest};
