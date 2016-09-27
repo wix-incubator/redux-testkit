@@ -1,5 +1,5 @@
 import 'jasmine-expect';
-import {ActionTest} from './../lib/index';
+import {ActionTest} from './../dist/index';
 
 describe('index', () => {
   it('exposes ActionTest', () => {
