@@ -15,7 +15,7 @@ module.exports = function(wallaby) {
 
     files: [
       {pattern: `node_modules/jasmine-expect/**/*.*`, instrument: false, load: false},
-      'lib/**/*.js',
+      'dist/**/*.js',
       'src/**/*.js',
       'test/**/*.js',
       '!test/**/*.[Ss]pec.js'

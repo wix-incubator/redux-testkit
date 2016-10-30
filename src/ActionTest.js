@@ -4,6 +4,7 @@ export class ActionTest {
   constructor() {
     this.reset();
     this.mockDispatch = this.mockDispatch.bind(this);
+    this.getState = this.getState.bind(this);
   }
 
   reset() {
