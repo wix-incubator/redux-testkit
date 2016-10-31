@@ -6,7 +6,7 @@ export class ReducerTest {
     this.initialState = initialState;
   }
 
-  //[ {state, action, expected, description} ]
+  //params = [ {state?, action, expected, description?} ]
   test(name, params, testEqual) {
      _.forEach(params, (param, index) => {
       it(`${index}:${name}  ${(param.description || '')}`,  () => {

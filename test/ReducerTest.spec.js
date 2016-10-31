@@ -9,7 +9,7 @@ const reducer = (state, action) => {
     case 'MINUS':
       return {val: val - action.val};
     default:
-      return {val: val};
+      return {val};
   }
 };
 
