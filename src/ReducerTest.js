@@ -18,7 +18,7 @@ export class ReducerTest {
      _.forEach(params, (param, index) => {
       it(`${index}:${name}  ${(param.description || '')}`,  () => {
         let {state, action, expected} = param;
-        state = state ? state : _.cloneDeep(this.initialState);
+        state = state ? state : this.initialState;
 
         const originalState = _.cloneDeep(state);
 
