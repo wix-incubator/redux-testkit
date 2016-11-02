@@ -4,14 +4,13 @@ import {ActionTest} from '../src/ActionTest';
 const syncAction = (dispatch, getState) => {
   dispatch({type: 'EVENT_1', data: 'DATA1!'});
   dispatch(syncAction);
-  dispatch({type: 'EVENT_2', data: getState().exisitingData + '_MODIFIED'})
+  dispatch({type: 'EVENT_2', data: getState().exisitingData + '_MODIFIED'});
 };
 
 const asyncAction = () => async function asyncInternal(dispatch, getState) {
   dispatch({type: 'EVENT_1', data: 'DATA1!'});
   dispatch(asyncAction());
-  dispatch({type: 'EVENT_2', data: getState().exisitingData + '_MODIFIED'})
-
+  dispatch({type: 'EVENT_2', data: getState().exisitingData + '_MODIFIED'});
 };
 
 describe('ActionTest', () => {
