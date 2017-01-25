@@ -99,7 +99,7 @@ expect(uut.getDispatched()).to....
 
 A redux reducer is a function that takes an action object, with a `type` field, and changes the state. In almost every case the state object itslef must be immutable.
 
-Uou can enforce immutability by using immutability libraries, but those often have a performance impact.
+You can enforce immutability by using immutability libraries, but those often have a performance impact.
 
 `ReducerTest` offers a test absed new way of enforcing immutability, and syntactic sugar for testing redcuers.
 
