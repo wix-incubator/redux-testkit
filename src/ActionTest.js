@@ -24,6 +24,10 @@ export class ActionTest {
     return _.isNumber(index) ? this.dispatched[index] : this.dispatched;
   }
 
+  getNumberOfDispatched() {
+    return this.dispatched.length;
+  }
+
   dispatchSync(action) {
     let done = false;
     let finalResult;
@@ -58,8 +62,6 @@ export class ActionTest {
   mockDispatch(action) {
     if (_.isFunction(action)) {
       this.dispatched.push(new DispatchedFunction(action));
-    } else if (_.has(action, '_instance')) {
-      this.dispatched.push(new DispatchedEvent(action));
     } else if (_.has(action, 'type')) {
       this.dispatched.push(new DispatchedObject(action));
     } else {
@@ -116,23 +118,5 @@ class DispatchedFunction extends Dispatched {
 
   getName() {
     return this.action.name;
-  }
-}
-
-class DispatchedEvent extends Dispatched {
-  isEvent() {
-    return true;
-  }
-
-  getInstance() {
-    return this.action._instance;
-  }
-
-  getInstanceType() {
-    return this.getInstance().constructor;
-  }
-
-  getParams() {
-    return this.getInstance().params;
   }
 }

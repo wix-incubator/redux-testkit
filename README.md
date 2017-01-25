@@ -1,5 +1,5 @@
 # redux-testkit
-##Testkit for redux actions (thunks or otherwise)
+##Testkit for redux reducers and redux actions (thunks or otherwise)
 
 ### Installation
 
@@ -9,12 +9,12 @@ Install this module via npm with `npm install redux-testkit --save-dev`
 
 Use this module to easily write **unit tests** for redux actions, including asynchronous actions using [redux-thunk](https://github.com/gaearon/redux-thunk) middleware.
 
-### Usage
+### Usage - Actions
 
 To import the module in your test file, use 
-`import {MockStore} from 'redux-testkit';` 
+`import {ActionTest} from 'redux-testkit';` 
 
-MockStore provides these methods:
+ActionTest provides these methods:
 
 #### reset()
 
@@ -22,7 +22,7 @@ Simply resets the store, usually you would use this in `beforeEach` or equivalen
 
 ```
 beforeEach(() => {
-    mockStore.reset();
+    actionTest.reset();
 });
 ```
 
@@ -43,11 +43,11 @@ export function actionToTest(parameters) {
   }
 }
 ```
-then you send this to the mockStore with `mockStore.dispatchSync(actionToTest(paramObjects));`.
+then you send this to the mockStore with `actionTest.dispatchSync(actionToTest(paramObjects));`.
 
 The testkit will run this test **synchronously** and then you can run `expect` asertations on the output with:
 
-#### getActions()
+#### getDispatched()
 
 This is where you do the work in the tests. To unit test an action, you want to test what effect the action has given a specific starting environment. We set up this environment before the test with `setState()` and by passing parameters. There are three ways a dispatched action can cause effects:
 
@@ -59,17 +59,21 @@ In case 3, you test the effect by mocking the external function. Typically you w
 
 redux-testkit allows you to *unit test* cases 1 and 2.
 
-`getActions()` returns an `array` of all the dispatches sent by the tested action, in order. In case 1, the entire object is saved and you can `expect` it to have a type and other fields, for example:
+`getDispatched()` returns an `array` of all the dispatches sent by the tested action, in order. In case 1, the entire object is saved and you can `expect` it to have a type and other fields, for example:
+
+`getDispatched(n)` returns an object with data about the dispatched at position `n`.
 
 ```
-expect(mockStore.getActions()[0].type).toEqual(actionTypes.ACTION_TYPE_1);
-expect(mockStore.getActions()[0].otherField).toEqual({some object});
+expect(getDispatched(0).isPlainObject()). toBeTrue();
+expect(getDispatched(0).getType()).toEqual(actionTypes.ACTION_TYPE_1);
+expect(getDispatched(0).getParams().otherField).toEqual({some object});
 ```
 
 In case 2, the `name` of the dispatched function is saved, and can be tested like this
 
 ```
-expect(mockStore.getActions()[1]).toEqual('name_of_function');
+expect(uut.getDispatched(1).isFunction()).toBeTrue();
+expect(uut.getDispatched(1).getName()).toEqual('name_of_function');
 ```
 
 **If this is another thunk, then you must name the internal anonymous async function, like this:**
@@ -81,13 +85,43 @@ export function name_of_function() {
 }
 ```
 
-To test a **synchronous** action that dispacthes other actions or objects, you should inject the `mockDispatch()` and `getState()` from the mockStore. For example:
+To test a **synchronous** action that dispacthes other actions or objects, you should inject the `mockDispatch()` and `getState()` from the actionTest. For example:
 
 ```
-const result = actions.syncAction(mockStore.mockDispatch, mockStore.getState(), params...);
+const result = actions.syncAction(actionTest.mockDispatch, actionTest.getState(), params...);
 expect(result).toEqual(123456);
-expect(mockStore.getActions()).to....
+expect(uut.getDispatched()).to....
 ```
+
+### Usage - Reducers
+
+`import {ReducerTest} from 'redux-testkit';` 
+
+A redux reducer is a function that takes an action object, with a `type` field, and changes the state. In almost every case the state object itslef must be immutable.
+
+Uou can enforce immutability by using immutability libraries, but those often have a performance impact.
+
+`ReducerTest` offers a test absed new way of enforcing immutability, and syntactic sugar for testing redcuers.
+
+`ReducerTest` takes two arguments in the constructor: the first is the reduce function you want to test, and the second is an option initialState to use for each test.
+
+`ReducerTest` has two methods:
+
+#### test(name, params, testEqual)
+
+This uses your `testEqual` to test a number of cases provided in the `params`.
+
+`params` must be an arra of objects with this structure:
+
+`{action, expected, state, description}` where state and description are optional. 
+
+`ReducerTest` will test each case given in the params, with either the default initial state or the provided state, and asseert that the expected result is equal to the actual result.
+
+To test for immutability, use:
+
+#### throwOnMutation() 
+
+This will set the `ReducerTest` to throw an exception when the state is mutated in any test then run on it. By testing with `ReducerTest` with this set, you can insure that your state is immutable without the need for any immutability library.
 
 ## TODO
 [ ] Improve syntax with Matchers - Please open issues to suggest the syntax you'd want!

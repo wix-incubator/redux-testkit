@@ -30,6 +30,7 @@ describe('ActionTest', () => {
 
   it('starts with empty actions', () => {
     expect(uut.getDispatched()).toEqual([]);
+    expect(uut.getNumberOfDispatched()).toEqual(0);
   });
 
   it('holds state', () => {
@@ -48,6 +49,7 @@ describe('ActionTest', () => {
   it('tests a synchronous action', () => {
     uut.setState({exisitingData: 'EXISITNG'});
     uut.dispatchSync(syncAction);
+    expect(uut.getNumberOfDispatched()).toEqual(3);
     expect(uut.getDispatched(0).isPlainObject()).toBeTrue();
     expect(uut.getDispatched(0).getType()).toEqual('EVENT_1');
     expect(uut.getDispatched(0).getParams().data).toEqual('DATA1!');
@@ -63,6 +65,7 @@ describe('ActionTest', () => {
   it('tests an asynchronous action', () => {
     uut.setState({exisitingData: 'EXISITNG'});
     uut.dispatchSync(asyncAction());
+    expect(uut.getNumberOfDispatched()).toEqual(3);
     expect(uut.getDispatched(0).isPlainObject()).toBeTrue();
     expect(uut.getDispatched(0).getType()).toEqual('EVENT_1');
     expect(uut.getDispatched(0).getParams().data).toEqual('DATA1!');
