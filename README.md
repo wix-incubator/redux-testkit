@@ -123,5 +123,51 @@ To test for immutability, use:
 
 This will set the `ReducerTest` to throw an exception when the state is mutated in any test then run on it. By testing with `ReducerTest` with this set, you can insure that your state is immutable without the need for any immutability library.
 
+### Usage - WaitForAsyncsMiddleware
+a Helpful middleware for running integration tests that include thunk actions. 
+If you want to test a complex flow in your app from end to end that has nested thunk actions calls, async calls and more, use it.
+
+To import the module in your test file, use 
+`import {WaitForAsyncsMiddleware} from 'redux-testkit';` 
+
+WaitForAsyncsMiddleware provides these methods:
+
+#### createMiddleware()
+
+Creates a redux middleware that captures all async actions and allows you to wait till they are all resolved. 
+
+```
+beforeEach(() => {
+    const WaitForMiddleware = WaitForAsyncsMiddleware.createMiddleware();
+    store = createStore(combineReducers(reducers), applyMiddleware(WaitForMiddleware, thunk));
+});
+```
+
+#### waitForPendingAsyncs()
+
+This method will wait for all current pending action promises (async calls).
+It will also wait for the subsequence async actions that were called as a result of the resolve of any prior async action.
+It will finish once all recursive async action calls were resolved.
+
+```
+it('test async action flow', async () => {
+    store.dispatch(thunkActionThatCallOtherThunkActions());
+    await WaitForAsyncsMiddleware.waitForPendingAsyncs();
+    expect(store.getState().expectedData).toBeDefined();
+});
+```
+
+#### reset()
+
+This method will reset the array of pending async action calls were captured. 
+reset is being called every time you call `createMiddleware` method.
+
+```
+beforeEach(() => {
+    WaitForAsyncsMiddleware.reset();
+ });
+```
+
+
 ## TODO
 [ ] Improve syntax with Matchers - Please open issues to suggest the syntax you'd want!
