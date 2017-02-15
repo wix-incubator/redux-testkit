@@ -11,8 +11,13 @@ Use this module to easily write **unit tests** for redux actions, including asyn
 
 ### Usage - Actions
 
-To import the module in your test file, use 
-`import {ActionTest} from 'redux-testkit';` 
+To make usage of the module in your test file, import and instantiate it:
+
+```js
+import {ActionTest} from 'redux-testkit';
+
+const actionTest = new ActionTest();
+```
 
 ActionTest provides these methods:
 
@@ -20,7 +25,7 @@ ActionTest provides these methods:
 
 Simply resets the store, usually you would use this in `beforeEach` or equivalent in your test suite, for example
 
-```
+```js
 beforeEach(() => {
     actionTest.reset();
 });
@@ -36,7 +41,7 @@ This sets the redux store state that will be provided via `getState` to thunks d
 
 This is the key method for running your tests. Say your thunk is:
 
-```
+```js
 export function actionToTest(parameters) {
   return async function(dispatch, getState) {
     //Asynchronous logic with lots of awaits here
@@ -63,22 +68,22 @@ redux-testkit allows you to *unit test* cases 1 and 2.
 
 `getDispatched(n)` returns an object with data about the dispatched at position `n`.
 
-```
-expect(getDispatched(0).isPlainObject()). toBeTrue();
-expect(getDispatched(0).getType()).toEqual(actionTypes.ACTION_TYPE_1);
-expect(getDispatched(0).getParams().otherField).toEqual({some object});
+```js
+expect(actionTest.getDispatched(0).isPlainObject()). toBeTrue();
+expect(actionTest.getDispatched(0).getType()).toEqual(actionTypes.ACTION_TYPE_1);
+expect(actionTest.getDispatched(0).getParams().otherField).toEqual({some object});
 ```
 
 In case 2, the `name` of the dispatched function is saved, and can be tested like this
 
-```
-expect(uut.getDispatched(1).isFunction()).toBeTrue();
-expect(uut.getDispatched(1).getName()).toEqual('name_of_function');
+```js
+expect(actionTest.getDispatched(1).isFunction()).toBeTrue();
+expect(actionTest.getDispatched(1).getName()).toEqual('name_of_function');
 ```
 
 **If this is another thunk, then you must name the internal anonymous async function, like this:**
 
-```
+```js
 export function name_of_function() {
   return async function name_of_function(dispatch, getState) {
   }
@@ -87,10 +92,10 @@ export function name_of_function() {
 
 To test a **synchronous** action that dispacthes other actions or objects, you should inject the `mockDispatch()` and `getState()` from the actionTest. For example:
 
-```
+```js
 const result = actions.syncAction(actionTest.mockDispatch, actionTest.getState(), params...);
 expect(result).toEqual(123456);
-expect(uut.getDispatched()).to....
+expect(actionTest.getDispatched()).to....
 ```
 
 ### Usage - Reducers
@@ -136,7 +141,7 @@ WaitForAsyncsMiddleware provides these methods:
 
 Creates a redux middleware that captures all async actions and allows you to wait till they are all resolved. 
 
-```
+```js
 beforeEach(() => {
     const WaitForMiddleware = WaitForAsyncsMiddleware.createMiddleware();
     store = createStore(combineReducers(reducers), applyMiddleware(WaitForMiddleware, thunk));
@@ -149,7 +154,7 @@ This method will wait for all current pending action promises (async calls).
 It will also wait for the subsequence async actions that were called as a result of the resolve of any prior async action.
 It will finish once all recursive async action calls were resolved.
 
-```
+```js
 it('test async action flow', async () => {
     store.dispatch(thunkActionThatCallOtherThunkActions());
     await WaitForAsyncsMiddleware.waitForPendingAsyncs();
@@ -162,7 +167,7 @@ it('test async action flow', async () => {
 This method will reset the array of pending async action calls were captured. 
 reset is being called every time you call `createMiddleware` method.
 
-```
+```js
 beforeEach(() => {
     WaitForAsyncsMiddleware.reset();
  });
