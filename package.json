@@ -35,6 +35,8 @@
     "eslint-plugin-babel": "^3.0.0",
     "eslint-plugin-react": "^4.2.3",
     "eslint-plugin-react-native": "^1.0.0",
-    "babel-eslint": "^6.0.4"
+    "babel-eslint": "^6.0.4",
+    "redux": "^3.6.0",
+    "redux-thunk": "^2.2.0"
   }
 }
