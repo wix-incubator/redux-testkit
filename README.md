@@ -9,6 +9,11 @@ Install this module via npm with `npm install redux-testkit --save-dev`
 
 Use this module to easily write **unit tests** for redux actions, including asynchronous actions using [redux-thunk](https://github.com/gaearon/redux-thunk) middleware.
 
+### What's Included?
+* [Actions Unit Tests using ActionTest](#usage---actions)
+* [Reducers Unit Tests using ReducerTest](#usage---reducers)
+* [Integration Tests using WaitForAsyncsMiddleware](#usage---waitforasyncsmiddleware)
+
 ### Usage - Actions
 
 To make usage of the module in your test file, import and instantiate it:
