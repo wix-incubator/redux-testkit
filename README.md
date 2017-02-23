@@ -77,6 +77,8 @@ redux-testkit allows you to *unit test* cases 1 and 2.
 expect(actionTest.getDispatched(0).isPlainObject()). toBeTrue();
 expect(actionTest.getDispatched(0).getType()).toEqual(actionTypes.ACTION_TYPE_1);
 expect(actionTest.getDispatched(0).getParams().otherField).toEqual({some object});
+// Note: getParam() can be used instead of getParams() as a convenience:
+expect(actionTest.getDispatched(0).getParam('otherField')).toEqual({some object});
 ```
 
 In case 2, the `name` of the dispatched function is saved, and can be tested like this

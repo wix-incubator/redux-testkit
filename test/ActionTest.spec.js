@@ -59,7 +59,7 @@ describe('ActionTest', () => {
 
     expect(uut.getDispatched(2).isPlainObject()).toBeTrue();
     expect(uut.getDispatched(2).getType()).toEqual('EVENT_2');
-    expect(uut.getDispatched(2).getParams().data).toEqual('EXISITNG_MODIFIED');
+    expect(uut.getDispatched(2).getParam('data')).toEqual('EXISITNG_MODIFIED');
   });
 
   it('tests an asynchronous action', () => {
@@ -75,6 +75,6 @@ describe('ActionTest', () => {
 
     expect(uut.getDispatched(2).isPlainObject()).toBeTrue();
     expect(uut.getDispatched(2).getType()).toEqual('EVENT_2');
-    expect(uut.getDispatched(2).getParams().data).toEqual('EXISITNG_MODIFIED');
+    expect(uut.getDispatched(2).getParam('data')).toEqual('EXISITNG_MODIFIED');
   });
 });

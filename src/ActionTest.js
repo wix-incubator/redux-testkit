@@ -95,6 +95,10 @@ class Dispatched {
   getParams() {
     //
   }
+
+  getParam() {
+    //
+  }
 }
 
 class DispatchedObject extends Dispatched {
@@ -108,6 +112,10 @@ class DispatchedObject extends Dispatched {
 
   getParams() {
     return this.action;
+  }
+
+  getParam(name) {
+    return this.getParams()[name];
   }
 }
 
