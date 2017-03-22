@@ -57,7 +57,7 @@ describe('counter reducer', () => {
 
 ```
 
-A redux reducer is a function that takes an action object, with a `type` field, and changes the state. In almost every case the state object itslef must remain immutable.
+A redux reducer is a function that takes an action object, with a `type` field, and changes the state. In almost every case the state object itself must remain immutable.
 
 #### `Reducer(reducer, state).expect(action).toReturnState(result)`
 
