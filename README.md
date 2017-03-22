@@ -1,13 +1,77 @@
-# redux-testkit
-##Testkit for redux reducers and redux actions (thunks or otherwise)
+# Redux Testkit
+> Complete and opinionated testkit for testing Redux projects (reducers, selectors, actions, thunks)
 
-### Installation
+* [Installation](#installation)
+* [Recipe - Unit testing reducers](#recipe---unit-testing-reducers)
 
-Install this module via npm with `npm install redux-testkit --save-dev`
+<br>
 
-### Description
+## What tests are we going to write?
 
-Use this module to easily write **unit tests** for redux actions, including asynchronous actions using [redux-thunk](https://github.com/gaearon/redux-thunk) middleware.
+* *Unit tests* for [reducers](http://redux.js.org/docs/basics/Reducers.html) - test recipe [here](#recipe---unit-testing-reducers)
+
+<br>
+
+## Installation
+
+* Install the package from npm
+
+```
+npm install redux-testkit --save-dev
+```
+
+* Make sure you have a test runner installed, we recommend [jest](https://facebook.github.io/jest/docs/getting-started.html)
+
+```
+npm install jest --save-dev
+```
+
+<br>
+
+## Recipe - Unit testing reducers
+
+```js
+import { Reducer } from 'redux-testkit';
+import uut from '../reducer';
+
+describe('counter reducer', () => {
+
+  it('should have initial state', () => {
+    expect(uut()).toEqual({ counter: 0 });
+  });
+  
+  it('should handle INCREMENT action on initial state', () => {
+    const action = { type: 'INCREMENT' };
+    const result = { counter: 1 };
+    Reducer(uut).expect(action).toReturnState(result);
+  });
+  
+  it('should handle INCREMENT action on existing state', () => {
+    const action = { type: 'INCREMENT' };
+    const state = { counter: 1 };
+    const result = { counter: 2 };
+    Reducer(uut, state).expect(action).toReturnState(result);
+  });
+  
+});
+
+```
+
+A redux reducer is a function that takes an action object, with a `type` field, and changes the state. In almost every case the state object itslef must remain immutable.
+
+#### `Reducer(reducer, state).expect(action).toReturnState(result)`
+
+Runs the `reducer` on current `state` providing an `action`. The current `state` argument is optional, if not provided uses initial state. Makes sure the returned state is `result`. 
+
+Also verifies immutability - that `state` did not mutate.
+
+#### `Reducer(reducer, state).expect(action).toReturnStateWithMutation(result)`
+
+Runs the `reducer` on current `state` providing an `action`. The current `state` argument is optional, if not provided uses initial state. Makes sure the returned state is `result`. 
+
+Does not verify immutability.
+
+<br>
 
 ### What's Included?
 * [Actions Unit Tests using ActionTest](#usage---actions)
