@@ -42,6 +42,7 @@
     "jest": "^19.0.2",
     "proxyquire": "1.7.4",
     "redux": "^3.6.0",
-    "redux-thunk": "^2.2.0"
+    "redux-thunk": "^2.2.0",
+    "seamless-immutable": "^7.1.1"
   }
 }

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 export default function(reducer, state) {
-  const initialState = _.cloneDeep(state || reducer(undefined, {}));
+  const initialState = state || reducer(undefined, {});
   return {
     expect: (action) => {
       const originalState = _.cloneDeep(initialState);
