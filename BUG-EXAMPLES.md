@@ -71,7 +71,7 @@ describe('person selectors', () => {
   it('should return a reverse list of names', () => {
     const state = { names: ['John', 'Rob'] }
     const result = ['Rob', 'John'];
-    Selector(uut.getReverseNames).expect(state).toReturnState(result);
+    Selector(uut.getReverseNames).expect(state).toReturn(result);
   });
 
 });
