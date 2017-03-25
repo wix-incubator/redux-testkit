@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import {deepEqual} from './utils';
 
 export default function(reducer, state) {
   const initialState = state || reducer(undefined, {});
@@ -6,13 +7,16 @@ export default function(reducer, state) {
     expect: (action) => {
       const originalState = _.cloneDeep(initialState);
       const newState = reducer(initialState, action);
-      
+
       const mutated = !deepEqual(initialState, originalState);
 
       return {
         toReturnState: (expected) => {
           expect(newState).toEqual(expected);
-          expect(mutated).toEqual(false);
+          // expect(mutated).toEqual(false);
+          if (mutated) {
+            throw new Error('state mutated after running reducer');
+          }
         },
         toReturnStateWithMutation: (expected) => {
           expect(newState).toEqual(expected);
@@ -20,29 +24,4 @@ export default function(reducer, state) {
       };
     }
   };
-}
-
-
-function deepEqual(x, y) {
-  if ((typeof x === "object" && x !== null) && (typeof y === "object" && y !== null)) {
-    if (Object.keys(x).length !== Object.keys(y).length) {
-      return false;
-    }
-
-    for (let prop in x) {
-      if (y.hasOwnProperty(prop)) {
-        if (!deepEqual(x[prop], y[prop])) {
-          return false;
-        }
-      } else {
-        return false;
-      }
-    }
-
-    return true;
-  } else if (x !== y) {
-    return false;
-  } else {
-    return true;
-  }
 }

@@ -3,12 +3,15 @@
 
 * [Installation](#installation)
 * [Recipe - Unit testing reducers](#recipe---unit-testing-reducers)
+* [Recipe - Unit testing selectors](#recipe---unit-testing-selectors)
+* [Building and testing this library](#building-and-testing-this-library)
 
 <br>
 
 ## What tests are we going to write?
 
 * *Unit tests* for [reducers](http://redux.js.org/docs/basics/Reducers.html) - test recipe [here](#recipe---unit-testing-reducers)
+* *Unit tests* for [selectors](http://redux.js.org/docs/recipes/ComputingDerivedData.html) - test recipe [here](#recipe---unit-testing-selectors)
 
 <br>
 
@@ -39,37 +42,90 @@ describe('counter reducer', () => {
   it('should have initial state', () => {
     expect(uut()).toEqual({ counter: 0 });
   });
-  
+
   it('should handle INCREMENT action on initial state', () => {
     const action = { type: 'INCREMENT' };
     const result = { counter: 1 };
     Reducer(uut).expect(action).toReturnState(result);
   });
-  
+
   it('should handle INCREMENT action on existing state', () => {
     const action = { type: 'INCREMENT' };
     const state = { counter: 1 };
     const result = { counter: 2 };
     Reducer(uut, state).expect(action).toReturnState(result);
   });
-  
+
 });
 
 ```
 
-A redux reducer is a function that takes an action object, with a `type` field, and changes the state. In almost every case the state object itself must remain immutable.
+A redux reducer is a pure function that takes an action object, with a `type` field, and changes the state. In almost every case the state object itself must remain immutable.
 
 #### `Reducer(reducer, state).expect(action).toReturnState(result)`
 
-Runs the `reducer` on current `state` providing an `action`. The current `state` argument is optional, if not provided uses initial state. Makes sure the returned state is `result`. 
+Runs the `reducer` on current `state` providing an `action`. The current `state` argument is optional, if not provided uses initial state. Makes sure the returned state is `result`.
 
-Also verifies immutability - that `state` did not mutate.
+Also verifies immutability - that `state` did not mutate. [Why is this important? see example bug](BUG-EXAMPLES.md#reducer)
 
 #### `Reducer(reducer, state).expect(action).toReturnStateWithMutation(result)`
 
-Runs the `reducer` on current `state` providing an `action`. The current `state` argument is optional, if not provided uses initial state. Makes sure the returned state is `result`. 
+Runs the `reducer` on current `state` providing an `action`. The current `state` argument is optional, if not provided uses initial state. Makes sure the returned state is `result`.
 
 Does not verify immutability.
+
+<br>
+
+## Recipe - Unit testing selectors
+
+```js
+import { Selector } from 'redux-testkit';
+import * as uut from '../reducer';
+
+describe('numbers selectors', () => {
+
+  it('should select integers from numbers state', () => {
+    const state = { numbers: [1, 2.2, 3.14, 4, 5.75, 6] };
+    const result = [1, 4, 6];
+    Selector(uut.getIntegers).expect(state).toReturn(result);
+  });
+
+});
+
+```
+
+A redux selector is a pure function that takes the state and computes some derivation from it. This operation is read-only and the state object itself must not change.
+
+#### `Selector(selector).expect(state).toReturn(result)`
+
+Runs the `selector` function on a given `state`. Makes sure the returned result is `result`.
+
+Also verifies that `state` did not mutate. [Why is this important? see example bug](BUG-EXAMPLES.md#selector)
+
+#### `Selector(selector).expect(state, ...args).toReturn(result)`
+
+Runs the `selector` function on a given `state`. If the selector takes more arguments, provide them at `...args` (the state is always assumed to be the first argument of a selector). Makes sure the returned result is `result`.
+
+Also verifies that `state` did not mutate.
+
+<br>
+
+## Building and testing this library
+
+This section is relevant only if you want to contribute to this library or build it locally.
+
+* Install and build
+
+```
+npm install
+npm run build
+```
+
+* Run lint and tests
+
+```
+npm run test
+```
 
 <br>
 
@@ -127,7 +183,7 @@ This is where you do the work in the tests. To unit test an action, you want to 
 
 1. By dispatching an object with a `type` field to the store
 2. By dispatching another action to the store
-3. By calling some external function 
+3. By calling some external function
 
 In case 3, you test the effect by mocking the external function. Typically you would extract that logic to a separate class and import it into your action's class, and so you mock it by using a tool like `proxyquire` when importing you actions into the test suite.
 
@@ -171,7 +227,7 @@ expect(actionTest.getDispatched()).to....
 
 ### Usage - Reducers
 
-`import {ReducerTest} from 'redux-testkit';` 
+`import {ReducerTest} from 'redux-testkit';`
 
 A redux reducer is a function that takes an action object, with a `type` field, and changes the state. In almost every case the state object itslef must be immutable.
 
@@ -189,28 +245,28 @@ This uses your `testEqual` to test a number of cases provided in the `params`.
 
 `params` must be an arra of objects with this structure:
 
-`{action, expected, state, description}` where state and description are optional. 
+`{action, expected, state, description}` where state and description are optional.
 
 `ReducerTest` will test each case given in the params, with either the default initial state or the provided state, and asseert that the expected result is equal to the actual result.
 
 To test for immutability, use:
 
-#### throwOnMutation() 
+#### throwOnMutation()
 
 This will set the `ReducerTest` to throw an exception when the state is mutated in any test then run on it. By testing with `ReducerTest` with this set, you can insure that your state is immutable without the need for any immutability library.
 
 ### Usage - WaitForAsyncsMiddleware
-a Helpful middleware for running integration tests that include thunk actions. 
+a Helpful middleware for running integration tests that include thunk actions.
 If you want to test a complex flow in your app from end to end that has nested thunk actions calls, async calls and more, use it.
 
-To import the module in your test file, use 
-`import {WaitForAsyncsMiddleware} from 'redux-testkit';` 
+To import the module in your test file, use
+`import {WaitForAsyncsMiddleware} from 'redux-testkit';`
 
 WaitForAsyncsMiddleware provides these methods:
 
 #### createMiddleware()
 
-Creates a redux middleware that captures all async actions and allows you to wait till they are all resolved. 
+Creates a redux middleware that captures all async actions and allows you to wait till they are all resolved.
 
 ```js
 beforeEach(() => {
@@ -235,7 +291,7 @@ it('test async action flow', async () => {
 
 #### reset()
 
-This method will reset the array of pending async action calls were captured. 
+This method will reset the array of pending async action calls were captured.
 reset is being called every time you call `createMiddleware` method.
 
 ```js

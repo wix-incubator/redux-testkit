@@ -67,7 +67,7 @@ describe('Reducer testkit tool', () => {
     it('should reducer work with given initial state', () => {
       uut(reducer, {value: 2}).expect(ADD_ACTION).toReturnState({value: 2 + ADD_ACTION.value});
     });
-    
+
     // this test suppose to fail
     it('should fail test with given initial state on mutating reducer', () => {
       // uut(mutatingReducer, {value: 6}).expect(SUBTRACT_ACTION).toReturnState({value: 6 - SUBTRACT_ACTION.value});
@@ -75,7 +75,6 @@ describe('Reducer testkit tool', () => {
   });
 
   describe('should support 3rd party libs like seamless-immutable', () => {
-
     const immutableInitialState = Immutable(initialState);
     const immutableReducer = (state = immutableInitialState, action = {}) => {
       switch (action.type) {
@@ -92,7 +91,7 @@ describe('Reducer testkit tool', () => {
     it('should reducer handle action correctly', () => {
       uut(immutableReducer).expect(ADD_ACTION).toReturnState({value: initialState.value + ADD_ACTION.value});
     });
-    
+
     // this test suppose to fail
     it('should fail test with given initial state on mutating reducer', () => {
       // uut(mutatingReducer, {value: 6}).expect(SUBTRACT_ACTION).toReturnState({value: 6 - SUBTRACT_ACTION.value});
