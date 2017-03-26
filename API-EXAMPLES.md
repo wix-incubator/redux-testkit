@@ -1,4 +1,4 @@
-# Examples
+# API Examples
 
 ## Reducer
 
