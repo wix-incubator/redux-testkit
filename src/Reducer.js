@@ -7,7 +7,6 @@ export default function(reducer, state) {
     expect: (action) => {
       const originalState = _.cloneDeep(initialState);
       const newState = reducer(initialState, action);
-
       const mutated = !deepEqual(initialState, originalState);
 
       return {
@@ -25,11 +24,17 @@ export default function(reducer, state) {
           if (mutated) {
             throw new Error('state mutated after running reducer');
           }
-        },
-        toReturnStateWithMutation: (expected) => {
-          expect(newState).toEqual(expected);
         }
       };
+    },
+    execute: (action) => {
+      const originalState = _.cloneDeep(initialState);
+      const newState = reducer(initialState, action);
+      const mutated = !deepEqual(initialState, originalState);
+      if (mutated) {
+        throw new Error('state mutated after running reducer');
+      }
+      return newState;
     }
   };
 }

@@ -68,11 +68,27 @@ Runs the `reducer` on current `state` providing an `action`. The current `state`
 
 Also verifies immutability - that `state` did not mutate. [Why is this important? see example bug](BUG-EXAMPLES.md#reducer)
 
-#### `Reducer(reducer, state).expect(action).toReturnStateWithMutation(result)`
+> See [more examples](EXAMPLES.md#reducerreducer-stateexpectactiontoreturnstateresult) of this API
 
-Runs the `reducer` on current `state` providing an `action`. The current `state` argument is optional, if not provided uses initial state. Makes sure the returned state is `result`.
+#### `Reducer(reducer, state).expect(action).toChangeInState(changes)`
 
-Does not verify immutability.
+Runs the `reducer` on current `state` providing an `action`. The current `state` argument is optional, if not provided uses initial state. Makes sure the part that changed in the returned state matches `changes` and the rest of the state hasn't changed. The format of `changes` is partial state, even a deep internal object - it is compared to returned state after running [`_.merge(originalState, changes)`](https://lodash.com/docs/#merge).
+
+Also verifies immutability of the `state`.
+
+The added value of this API compared to `toReturnState` is when your state object is very large and you prefer to reduce the boilerplate of preparing the entire `result` by yourself.
+
+> See [more examples](EXAMPLES.md#reducerreducer-stateexpectactiontochangeinstatechanges) of this API
+
+#### `Reducer(reducer, state).execute(action)`
+
+Runs the `reducer` on current `state` providing an `action`. The current `state` argument is optional, if not provided uses initial state. Returns the returned state so you can run expectations manually. It's not recommended to use this API directly because you usually won't verify that parts in the returned state that were not supposed to change, indeed did not change.
+
+Also verifies immutability of the `state`.
+
+The added value of this API compared to the others is that it allows you to run your own expectations (which isn't recommended).
+
+> See [more examples](EXAMPLES.md#`reducerreducer-stateexecuteaction`) of this API
 
 <br>
 
