@@ -68,7 +68,7 @@ A redux reducer is a pure function that takes an action object, with a `type` fi
 
 * Also verifies immutability - that `state` did not mutate. [Why is this important? see example bug](BUG-EXAMPLES.md#reducer)
 
-> See [more examples](API-EXAMPLES.md#reducerreducer-stateexpectactiontoreturnstateresult) of this API
+> [See some examples of this API](API-EXAMPLES.md#reducerreducer-stateexpectactiontoreturnstateresult)
 
 #### `Reducer(reducer, state).expect(action).toChangeInState(changes)`
 
@@ -78,7 +78,7 @@ A redux reducer is a pure function that takes an action object, with a `type` fi
 
 * The added value of this API compared to `toReturnState` is when your state object is very large and you prefer to reduce the boilerplate of preparing the entire `result` by yourself.
 
-> See [more examples](API-EXAMPLES.md#reducerreducer-stateexpectactiontochangeinstatechanges) of this API
+> [See some examples of this API](API-EXAMPLES.md#reducerreducer-stateexpectactiontochangeinstatechanges)
 
 #### `Reducer(reducer, state).execute(action)`
 
@@ -88,7 +88,7 @@ A redux reducer is a pure function that takes an action object, with a `type` fi
 
 * The added value of this API compared to the others is that it allows you to run your own expectations (which isn't recommended).
 
-> See [more examples](API-EXAMPLES.md#reducerreducer-stateexecuteaction) of this API
+> [See some examples of this API](API-EXAMPLES.md#reducerreducer-stateexecuteaction)
 
 <br>
 
