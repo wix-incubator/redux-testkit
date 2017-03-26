@@ -88,7 +88,7 @@ Also verifies immutability of the `state`.
 
 The added value of this API compared to the others is that it allows you to run your own expectations (which isn't recommended).
 
-> See [more examples](EXAMPLES.md#`reducerreducer-stateexecuteaction`) of this API
+> See [more examples](EXAMPLES.md#reducerreducer-stateexecuteaction) of this API
 
 <br>
 
