@@ -68,7 +68,7 @@ Runs the `reducer` on current `state` providing an `action`. The current `state`
 
 Also verifies immutability - that `state` did not mutate. [Why is this important? see example bug](BUG-EXAMPLES.md#reducer)
 
-> See [more examples](EXAMPLES.md#reducerreducer-stateexpectactiontoreturnstateresult) of this API
+> See [more examples](API-EXAMPLES.md#reducerreducer-stateexpectactiontoreturnstateresult) of this API
 
 #### `Reducer(reducer, state).expect(action).toChangeInState(changes)`
 
@@ -78,7 +78,7 @@ Also verifies immutability of the `state`.
 
 The added value of this API compared to `toReturnState` is when your state object is very large and you prefer to reduce the boilerplate of preparing the entire `result` by yourself.
 
-> See [more examples](EXAMPLES.md#reducerreducer-stateexpectactiontochangeinstatechanges) of this API
+> See [more examples](API-EXAMPLES.md#reducerreducer-stateexpectactiontochangeinstatechanges) of this API
 
 #### `Reducer(reducer, state).execute(action)`
 
@@ -88,7 +88,7 @@ Also verifies immutability of the `state`.
 
 The added value of this API compared to the others is that it allows you to run your own expectations (which isn't recommended).
 
-> See [more examples](EXAMPLES.md#reducerreducer-stateexecuteaction) of this API
+> See [more examples](API-EXAMPLES.md#reducerreducer-stateexecuteaction) of this API
 
 <br>
 

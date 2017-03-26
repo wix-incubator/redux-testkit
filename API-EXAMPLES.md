@@ -34,6 +34,8 @@ describe('counter reducer', () => {
 });
 ```
 
+<br>
+
 ### `Reducer(reducer, state).expect(action).toChangeInState(changes)`
 
 ```js
@@ -52,6 +54,8 @@ describe('person reducer', () => {
 });
 ```
 
+<br>
+
 ### `Reducer(reducer, state).execute(action)`
 
 ```js
@@ -69,3 +73,5 @@ describe('movies reducer', () => {
 
 });
 ```
+
+<br>
