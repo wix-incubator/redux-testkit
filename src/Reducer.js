@@ -18,6 +18,14 @@ export default function(reducer, state) {
             throw new Error('state mutated after running reducer');
           }
         },
+        toChangeInState: (expectedChanges) => {
+          const expected = _.merge({}, originalState, expectedChanges);
+          expect(newState).toEqual(expected);
+          // expect(mutated).toEqual(false);
+          if (mutated) {
+            throw new Error('state mutated after running reducer');
+          }
+        },
         toReturnStateWithMutation: (expected) => {
           expect(newState).toEqual(expected);
         }
