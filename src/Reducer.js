@@ -1,6 +1,13 @@
 import _ from 'lodash';
 import {deepEqual} from './utils';
 
+function toChangeInStateCustomizer(objValue, srcValue) {
+  if (_.isArray(objValue)) {
+    return srcValue;
+  }
+  return undefined;
+}
+
 export default function(reducer, state) {
   const initialState = state || reducer(undefined, {});
   return {
@@ -18,7 +25,7 @@ export default function(reducer, state) {
           }
         },
         toChangeInState: (expectedChanges) => {
-          const expected = _.merge({}, originalState, expectedChanges);
+          const expected = _.mergeWith(originalState, expectedChanges, toChangeInStateCustomizer);
           expect(newState).toEqual(expected);
           // expect(mutated).toEqual(false);
           if (mutated) {

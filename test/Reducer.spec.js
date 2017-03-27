@@ -60,26 +60,57 @@ describe('Reducer testkit tool', () => {
   });
 
   describe('toChangeInState: without allowing mutation of state', () => {
+    const SET_ACTION = {
+      type: 'SET_INTERNAL'
+    };
+    const SET_ARRAY_ACTION = {
+      type: 'SET_INTERNAL_ARRAY'
+    };
+
+    const reducerWithExtra = (state = {}, action = {}) => {
+      const stateCopy = _.cloneDeep(state);
+      switch (action.type) {
+        case SET_ACTION.type:
+          return _.set(stateCopy, 'a.b.c', 'hello');
+        case SET_ARRAY_ACTION.type:
+          return _.set(stateCopy, 'a.b', [1, 2]);
+        default:
+          return state;
+      }
+    };
+
     it('should test reducer state change after accpeting an action', () => {
       uut(counterReducer).expect(ADD_ACTION).toChangeInState({value: initialCounterState.value + ADD_ACTION.value});
       uut(counterReducer).expect(NON_EXISTING_ACTION).toChangeInState(initialCounterState);
     });
-    it('should reducer work with given initial state with extra fields', () => {
-      const reducerWithExtra = (state = {}, action = {}) => {
-        const stateCopy = _.cloneDeep(state);
-        switch (action.type) {
-          case 'SET_INTERNAL':
-            return _.set(stateCopy, 'a.b.c', 'hello');
-          default:
-            return state;
-        }
-      };
-      uut(reducerWithExtra).expect({type: 'SET_INTERNAL'}).toChangeInState({a: {b: {c: 'hello'}}});
-      uut(reducerWithExtra, {name: 'john'}).expect({type: 'SET_INTERNAL'}).toChangeInState({a: {b: {c: 'hello'}}});
-      uut(reducerWithExtra, {name: 'john'}).expect({type: 'SET_INTERNAL'}).toReturnState({name: 'john', a: {b: {c: 'hello'}}});
-      uut(reducerWithExtra, {a: {b: {d: 'world'}}}).expect({type: 'SET_INTERNAL'}).toChangeInState({a: {b: {c: 'hello'}}});
-      uut(reducerWithExtra, {a: {b: {d: 'world'}}}).expect({type: 'SET_INTERNAL'}).toReturnState({a: {b: {c: 'hello', d: 'world'}}});
+
+    it('should test state collection-content mutation with given initial state with inexplicit fields', () => {
+      uut(reducerWithExtra).expect(SET_ACTION).toChangeInState({a: {b: {c: 'hello'}}});
+      uut(reducerWithExtra, {name: 'john'}).expect(SET_ACTION).toChangeInState({a: {b: {c: 'hello'}}});
+      uut(reducerWithExtra, {name: 'john'}).expect(SET_ACTION).toReturnState({name: 'john', a: {b: {c: 'hello'}}});
+      uut(reducerWithExtra, {a: {b: {d: 'world'}}}).expect(SET_ACTION).toChangeInState({a: {b: {c: 'hello'}}});
+      uut(reducerWithExtra, {a: {b: {d: 'world'}}}).expect(SET_ACTION).toReturnState({a: {b: {c: 'hello', d: 'world'}}});
     });
+
+    it('should test state arrays mutation with given initial state with inexplicit fields', () => {
+      uut(reducerWithExtra).expect(SET_ARRAY_ACTION).toChangeInState({a: {b: [1, 2]}});
+      uut(reducerWithExtra, {a: {b: [-1, -2]}}).expect(SET_ARRAY_ACTION).toChangeInState({a: {b: [1, 2]}});
+      uut(reducerWithExtra, {a: {b: [-1, -2]}}).expect(SET_ARRAY_ACTION).toReturnState({a: {b: [1, 2]}});
+    });
+
+    // This tests a sensitive spot of *change-based* verification when arrays are involved, as lodash.merge() acts
+    // different with arrays than it does with collections. With collection, a deep copy is performed, while with arrays -
+    // as by default, an actual element-by-element *merge* is done, which isn't what we expect from toChangeInState().
+    it('should verify arrays mutation is done in an assignment-like and not merge-like strategy', () => {
+      uut(reducerWithExtra, {a: {b: [-1, -2, -3]}}).expect(SET_ARRAY_ACTION).toChangeInState({a: {b: [1, 2]}});
+      uut(reducerWithExtra, {a: {b: [-1, -2, -3]}}).expect(SET_ARRAY_ACTION).toReturnState({a: {b: [1, 2]}});
+    });
+
+    // this test suppose to fail
+    it('should fail test if content change overlooked', () => {
+      // uut(reducerWithExtra, {name: 'john'}).expect(SET_ACTION).toChangeInState({});
+    });
+
     // this test suppose to fail
     it('should fail test with given initial state on mutating reducer', () => {
       // uut(mutatingCounterReducer, {value: 6}).expect(SUBTRACT_ACTION).toChangeInState({value: 6 - SUBTRACT_ACTION.value});
