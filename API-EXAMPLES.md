@@ -69,9 +69,53 @@ describe('movies reducer', () => {
     const state = { movies: [] };
     const result = Reducer(uut, state).execute(action);
     expect(result.movies.length).toEqual(1);
+    expect(result.movies).toContain('Frozen');
   });
 
 });
+```
+
+<br>
+
+## Selector
+
+### `Selector(selector).expect(state, ...args).toReturn(result)`
+
+```js
+import { Selector } from 'redux-testkit';
+import * as uut from '../reducer';
+
+describe('numbers selectors', () => {
+
+  it('should select integers from numbers state', () => {
+    const state = { numbers: [1, 2.2, 3.14, 4, 5.75, 6] };
+    const result = [1, 4, 6];
+    Selector(uut.getIntegers).expect(state).toReturn(result);
+  });
+
+});
+
+```
+
+<br>
+
+### `Selector(selector).execute(state, ...args)`
+
+```js
+import { Selector } from 'redux-testkit';
+import * as uut from '../reducer';
+
+describe('numbers selectors', () => {
+
+  it('should select integers from numbers state', () => {
+    const state = { numbers: [1, 2.2, 3.14, 4, 5.75, 6] };
+    const result = Selector(uut.getIntegers).execute(state);
+    expect(result.length).toEqual(3);
+    expect(result).toContain(4);
+  });
+
+});
+
 ```
 
 <br>

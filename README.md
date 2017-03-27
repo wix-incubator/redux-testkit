@@ -86,7 +86,7 @@ A redux reducer is a pure function that takes an action object, with a `type` fi
 
 * Also verifies immutability of the `state`.
 
-* *The added value of this API compared to the others is that it allows you to run your own expectations (which isn't recommended).*
+* *The added value of this API compared to the others is that it allows you to run your own custom expectations (which isn't recommended).*
 
 > [See some examples of this API](API-EXAMPLES.md#reducerreducer-stateexecuteaction)
 
@@ -118,11 +118,25 @@ A redux selector is a pure function that takes the state and computes some deriv
 
 * Also verifies that `state` did not mutate. [Why is this important? see example bug](BUG-EXAMPLES.md#selector)
 
+> [See some examples of this API](API-EXAMPLES.md#selectorselectorexpectstate-argstoreturnresult)
+
 #### `Selector(selector).expect(state, ...args).toReturn(result)`
 
 * Runs the `selector` function on a given `state`. If the selector takes more arguments, provide them at `...args` (the state is always assumed to be the first argument of a selector). Makes sure the returned result is `result`.
 
 * Also verifies that `state` did not mutate.
+
+> [See some examples of this API](API-EXAMPLES.md#selectorselectorexpectstate-argstoreturnresult)
+
+#### `Selector(selector).execute(state, ...args)`
+
+* Runs the `selector` function on a given `state`. If the selector takes more arguments, provide them at `...args` (the state is always assumed to be the first argument of a selector). Returns the returned state so you can run expectations manually.
+
+* Also verifies that `state` did not mutate.
+
+* *The added value of this API compared to the others is that it allows you to run your own custom expectations.*
+
+> [See some examples of this API](API-EXAMPLES.md#selectorselectorexecutestate-args)
 
 <br>
 

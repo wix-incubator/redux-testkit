@@ -6,7 +6,6 @@ export default function(selector) {
     expect: (state, ...args) => {
       const originalState = _.cloneDeep(state);
       const result = selector(state, ...args);
-
       const mutated = !deepEqual(state, originalState);
 
       return {
@@ -18,6 +17,15 @@ export default function(selector) {
           }
         }
       };
+    },
+    execute: (state, ...args) => {
+      const originalState = _.cloneDeep(state);
+      const result = selector(state, ...args);
+      const mutated = !deepEqual(state, originalState);
+      if (mutated) {
+        throw new Error('state mutated after running selector');
+      }
+      return result;
     }
   };
 }

@@ -37,36 +37,33 @@ const mutatingCounterReducer = (state = _.cloneDeep(initialCounterState), action
 };
 
 describe('Reducer testkit tool', () => {
-  describe('toReturnState without allowing mutation of state', () => {
+  describe('toReturnState: without allowing mutation of state', () => {
     it('should test reducer state change after accpeting an action', () => {
       uut(counterReducer).expect(ADD_ACTION).toReturnState({value: initialCounterState.value + ADD_ACTION.value});
       uut(counterReducer).expect(SUBTRACT_ACTION).toReturnState({value: initialCounterState.value - SUBTRACT_ACTION.value});
       uut(counterReducer).expect(NON_EXISTING_ACTION).toReturnState(initialCounterState);
     });
-
     it('should fail test on reducer that mutate state', () => {
       // uut(mutatingCounterReducer).expect(ADD_ACTION).toReturnState({value: initialCounterState.value + ADD_ACTION.value});
       // uut(mutatingCounterReducer).expect(SUBTRACT_ACTION).toReturnState({value: initialCounterState.value - SUBTRACT_ACTION.value});
     });
   });
 
-  describe('toReturnState given initial state', () => {
+  describe('toReturnState: given initial state', () => {
     it('should reducer work with given initial state', () => {
       uut(counterReducer, {value: 2}).expect(ADD_ACTION).toReturnState({value: 2 + ADD_ACTION.value});
     });
-
     // this test suppose to fail
     it('should fail test with given initial state on mutating reducer', () => {
       // uut(mutatingCounterReducer, {value: 6}).expect(SUBTRACT_ACTION).toReturnState({value: 6 - SUBTRACT_ACTION.value});
     });
   });
 
-  describe('toChangeInState without allowing mutation of state', () => {
+  describe('toChangeInState: without allowing mutation of state', () => {
     it('should test reducer state change after accpeting an action', () => {
       uut(counterReducer).expect(ADD_ACTION).toChangeInState({value: initialCounterState.value + ADD_ACTION.value});
       uut(counterReducer).expect(NON_EXISTING_ACTION).toChangeInState(initialCounterState);
     });
-
     it('should reducer work with given initial state with extra fields', () => {
       const reducerWithExtra = (state = {}, action = {}) => {
         const stateCopy = _.cloneDeep(state);
@@ -83,14 +80,13 @@ describe('Reducer testkit tool', () => {
       uut(reducerWithExtra, {a: {b: {d: 'world'}}}).expect({type: 'SET_INTERNAL'}).toChangeInState({a: {b: {c: 'hello'}}});
       uut(reducerWithExtra, {a: {b: {d: 'world'}}}).expect({type: 'SET_INTERNAL'}).toReturnState({a: {b: {c: 'hello', d: 'world'}}});
     });
-
     // this test suppose to fail
     it('should fail test with given initial state on mutating reducer', () => {
       // uut(mutatingCounterReducer, {value: 6}).expect(SUBTRACT_ACTION).toChangeInState({value: 6 - SUBTRACT_ACTION.value});
     });
   });
 
-  describe('support 3rd party libs like seamless-immutable', () => {
+  describe('toReturnState: support 3rd party libs like seamless-immutable', () => {
     const immutableInitialCounterState = Immutable(initialCounterState);
     const immutableCounterReducer = (state = immutableInitialCounterState, action = {}) => {
       switch (action.type) {
@@ -103,23 +99,20 @@ describe('Reducer testkit tool', () => {
       }
       return state;
     };
-
     it('should reducer handle action correctly', () => {
       uut(immutableCounterReducer).expect(ADD_ACTION).toReturnState({value: initialCounterState.value + ADD_ACTION.value});
     });
-
     // this test suppose to fail
     it('should fail test with given initial state on mutating reducer', () => {
       // uut(mutatingCounterReducer, {value: 6}).expect(SUBTRACT_ACTION).toReturnState({value: 6 - SUBTRACT_ACTION.value});
     });
   });
 
-  describe('execute without allowing mutation of state', () => {
+  describe('execute: without allowing mutation of state', () => {
     it('should test reducer state change after accpeting an action', () => {
       const result = uut(counterReducer).execute(ADD_ACTION);
       expect(result.value).toEqual(initialCounterState.value + ADD_ACTION.value);
     });
-
     it('should fail test on reducer that mutate state', () => {
       // const result = uut(mutatingCounterReducer).execute(ADD_ACTION);
       // expect(result.value).toEqual(initialCounterState.value + ADD_ACTION.value);
