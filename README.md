@@ -167,7 +167,7 @@ describe('posts actions', () => {
     const redditService = require('../../../services/reddit');
     redditService.getPostsBySubreddit.mockReturnValueOnce(['post1', 'post2']);
     
-    const dispatches = await Thunk(uut.fetchPosts, state).execute();
+    const dispatches = await Thunk(uut.fetchPosts).execute();
     expect(dispatches.length).toBe(3);
     expect(dispatches[0].getAction()).toEqual({ type: 'POSTS_LOADING', loading: true });
     expect(dispatches[1].getAction()).toEqual({ type: 'POSTS_UPDATED', posts: ['post1', 'post2'] });
@@ -176,7 +176,7 @@ describe('posts actions', () => {
   
   it('should filter posts', () => {
     const state = { loading: false, posts: ['funny1', 'scary2', 'funny3'] };
-    const dispatches = Thunk(uut.filterPosts).execute('funny');
+    const dispatches = Thunk(uut.filterPosts, state).execute('funny');
     expect(dispatches.length).toBe(1);
     expect(dispatches[0].getAction()).toEqual({ type: 'POSTS_UPDATED', posts: ['funny1', 'funny3'] });
   });
