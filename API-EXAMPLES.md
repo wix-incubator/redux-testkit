@@ -120,6 +120,8 @@ describe('numbers selectors', () => {
 
 <br>
 
+## Thunk
+
 ### `Thunk(action, state).execute(...args)`
 
 ```js
