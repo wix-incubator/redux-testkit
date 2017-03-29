@@ -187,7 +187,7 @@ describe('posts actions', () => {
 
 A redux thunk wraps a synchronous or asynchronous function that performs an action. It can dispatch other actions (either plain objects or other thunks). It can also perform side effects like accessing servers.
 
-#### `Thunk(action, state).execute(...args).toReturn(result)`
+#### `Thunk(action, state).execute(...args)`
 
 * Runs the thunk `action` on current `state` given optional arguments `...args`. The current `state` argument is optional, no need to provide it if the thunk doesn't call `getState()`.
 
@@ -195,7 +195,7 @@ A redux thunk wraps a synchronous or asynchronous function that performs an acti
 
 * Also verifies that `state` did not mutate.
 
-> [See some examples of this API](API-EXAMPLES.md#thunkthunkaction-stateexecuteargstoreturnresult)
+> [See some examples of this API](API-EXAMPLES.md#thunkthunkaction-stateexecuteargs)
 
 ##### Available expectations over a dispatch
 
