@@ -1,4 +1,3 @@
-import 'jasmine-expect';
 import {WaitForAsyncsMiddleware} from '../src';
 import {createStore, applyMiddleware} from 'redux';
 import thunk from 'redux-thunk';
@@ -21,34 +20,30 @@ describe('WaitForAsyncsMiddleware spec', () => {
     WaitForAsyncsMiddleware.reset();
   });
 
-  it('should wait for all dispatched promises - simple flow', async (done) => {
+  it('should wait for all dispatched promises - simple flow', async () => {
     expect(store.getState().count).toBe(0);
     store.dispatch(asyncAction1());
     expect(store.getState().count).toBe(0);
     await WaitForAsyncsMiddleware.waitForPendingAsyncs();
     expect(store.getState().count).toBe(1);
-    done();
   });
 
-  it('should wait for all dispatched promises - complex flow', async (done) => {
+  it('should wait for all dispatched promises - complex flow', async () => {
     store.dispatch(asyncAction3());
     await WaitForAsyncsMiddleware.waitForPendingAsyncs();
     expect(store.getState().count).toBe(1);
-    done();
   });
-  
-  it('should wait for all dispatched promises - complex flow 2', async (done) => {
+
+  it('should wait for all dispatched promises - complex flow 2', async () => {
     store.dispatch(asyncAction4());
     await WaitForAsyncsMiddleware.waitForPendingAsyncs();
     expect(store.getState().count).toBe(2);
-    done();
   });
 
-  it('should wait for all dispatched promises - crazy flow', async (done) => {
+  it('should wait for all dispatched promises - crazy flow', async () => {
     store.dispatch(asyncAction5());
     await WaitForAsyncsMiddleware.waitForPendingAsyncs();
     expect(store.getState().count).toBe(5);
-    done();
   });
 });
 

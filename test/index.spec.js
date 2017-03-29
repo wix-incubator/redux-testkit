@@ -1,4 +1,3 @@
-import 'jasmine-expect';
 import {ActionTest, ReducerTest, Reducer, Selector} from './../dist/index';
 
 describe('index', () => {
