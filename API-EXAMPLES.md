@@ -119,3 +119,49 @@ describe('numbers selectors', () => {
 ```
 
 <br>
+
+### `Thunk(action, state).execute(...args)`
+
+```js
+import { Thunk } from 'redux-testkit';
+import * as uut from '../actions';
+
+describe('posts actions', () => {
+
+  it('should clear all posts', () => {
+    const dispatches = Thunk(uut.clearPosts).execute();
+    expect(dispatches.length).toBe(1);
+    expect(dispatches[0].getType()).toEqual('POSTS_UPDATED');
+    expect(dispatches[0].getAction()).toEqual({ type: 'POSTS_UPDATED', posts: [] });
+  });
+  
+  it('should fetch posts from server', async () => {
+    jest.mock('../../../services/reddit');
+    const redditService = require('../../../services/reddit');
+    redditService.getPostsBySubreddit.mockReturnValueOnce(['post1', 'post2']);
+    
+    const dispatches = await Thunk(uut.fetchPosts).execute();
+    expect(dispatches.length).toBe(3);
+    expect(dispatches[0].getAction()).toEqual({ type: 'POSTS_LOADING', loading: true });
+    expect(dispatches[1].getAction()).toEqual({ type: 'POSTS_UPDATED', posts: ['post1', 'post2'] });
+    expect(dispatches[2].getAction()).toEqual({ type: 'POSTS_LOADING', loading: false });
+  });
+  
+  it('should filter posts', () => {
+    const state = { loading: false, posts: ['funny1', 'scary2', 'funny3'] };
+    const dispatches = Thunk(uut.filterPosts, state).execute('funny');
+    expect(dispatches.length).toBe(1);
+    expect(dispatches[0].getAction()).toEqual({ type: 'POSTS_UPDATED', posts: ['funny1', 'funny3'] });
+  });
+  
+  it('should test a thunk that dispatches another thunk', async () => {
+    const dispatches = await Thunk(uut.login).execute();
+    expect(dispatches.length).toBe(1);
+    expect(dispatches[0].isFunction()).toBe(true);
+    expect(dispatches[0].getName()).toEqual('refreshSession');
+  });
+
+});
+```
+
+<br>
