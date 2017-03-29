@@ -195,7 +195,7 @@ A redux thunk wraps a synchronous or asynchronous function that performs an acti
 
 * Also verifies that `state` did not mutate.
 
-> [See some examples of this API](API-EXAMPLES.md#thunkthunkaction-stateexecuteargs)
+> [See some examples of this API](API-EXAMPLES.md#thunkaction-stateexecuteargs)
 
 ##### Available expectations over a dispatch
 
