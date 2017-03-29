@@ -4,6 +4,8 @@
 * [Installation](#installation)
 * [Recipe - Unit testing reducers](#recipe---unit-testing-reducers)
 * [Recipe - Unit testing selectors](#recipe---unit-testing-selectors)
+* [Recipe - Unit testing thunks](#recipe---unit-testing-thunks)
+* [Recipe - Integration tests for the entire store](#recipe---integration-tests-for-the-entire-store)
 * [Building and testing this library](#building-and-testing-this-library)
 
 <br>
@@ -12,6 +14,8 @@
 
 * *Unit tests* for [reducers](http://redux.js.org/docs/basics/Reducers.html) - test recipe [here](#recipe---unit-testing-reducers)
 * *Unit tests* for [selectors](http://redux.js.org/docs/recipes/ComputingDerivedData.html) - test recipe [here](#recipe---unit-testing-selectors)
+* *Unit tests* for [action handlers (thunks)](https://github.com/gaearon/redux-thunk) - test recipe [here](#recipe---unit-testing-thunks)
+* *Integration tests* for the entire [store](http://redux.js.org/docs/basics/Store.html) - test recipe [here](#recipe---integration-tests-for-the-entire-store)
 
 <br>
 
@@ -141,6 +145,92 @@ A redux selector is a pure function that takes the state and computes some deriv
 > *The added value of this API compared to the others is that it allows you to run your own custom expectations.*
 
 > [See some examples of this API](API-EXAMPLES.md#selectorselectorexecutestate-args)
+
+<br>
+
+## Recipe - Unit testing thunks
+
+```js
+import { Thunk } from 'redux-testkit';
+import * as uut from '../actions';
+
+describe('posts actions', () => {
+
+  it('should clear all posts', () => {
+    const dispatches = Thunk(uut.clearPosts).execute();
+    expect(dispatches.length).toBe(1);
+    expect(dispatches[0].getAction()).toEqual({ type: 'POSTS_UPDATED', posts: [] });
+  });
+  
+  it('should fetch posts from server', async () => {
+    jest.mock('../../../services/reddit');
+    const redditService = require('../../../services/reddit');
+    redditService.getPostsBySubreddit.mockReturnValueOnce(['post1', 'post2']);
+    
+    const dispatches = await Thunk(uut.fetchPosts, state).execute();
+    expect(dispatches.length).toBe(3);
+    expect(dispatches[0].getAction()).toEqual({ type: 'POSTS_LOADING', loading: true });
+    expect(dispatches[1].getAction()).toEqual({ type: 'POSTS_UPDATED', posts: ['post1', 'post2'] });
+    expect(dispatches[2].getAction()).toEqual({ type: 'POSTS_LOADING', loading: false });
+  });
+  
+  it('should filter posts', () => {
+    const state = { loading: false, posts: ['funny1', 'scary2', 'funny3'] };
+    const dispatches = Thunk(uut.filterPosts).execute('funny');
+    expect(dispatches.length).toBe(1);
+    expect(dispatches[0].getAction()).toEqual({ type: 'POSTS_UPDATED', posts: ['funny1', 'funny3'] });
+  });
+
+});
+
+```
+
+A redux thunk wraps a synchronous or asynchronous function that performs an action. It can dispatch other actions (either plain objects or other thunks). It can also perform side effects like accessing servers.
+
+#### `Thunk(action, state).execute(...args).toReturn(result)`
+
+* Runs the thunk `action` on current `state` given optional arguments `...args`. The current `state` argument is optional, no need to provide it if the thunk doesn't call `getState()`.
+
+* Returns an array of dispatches performed by the thunk (shallow, these dispatches are not executed). You can run expectations over them manually.
+
+* Also verifies that `state` did not mutate.
+
+> [See some examples of this API](API-EXAMPLES.md#thunkthunkaction-stateexecuteargstoreturnresult)
+
+##### Available expectations over a dispatch
+
+```js
+// when a plain object action was dispatched
+expect(dispatches[0].isPlainObject()).toBe(true);
+expect(dispatches[0].getType()).toEqual('LOADING_CHANGED');
+expect(dispatches[0].getAction()).toEqual({ type: 'LOADING_CHANGED', loading: true });
+
+// when another thunk was dispatched
+expect(dispatches[0].isFunction()).toBe(true);
+expect(dispatches[0].getName()).toEqual('refreshSession'); // the function name, see note below
+```
+
+##### Being able to expect dispatched thunk function names
+
+This is relevant when the tested thunk dispatches another thunk. In order to be able to test the name of the thunk that was dispatched, you will have to provide an explicit name to the internal anonymous function in the thunk implementation. For example:
+
+```js
+export function refreshSession() {
+  return async function refreshSession(dispatch, getState) {
+    // ...
+  };
+}
+```
+
+##### Limitations when testing thunks that dispatch other thunks
+
+* If the tested thunk dispatches another thunk, the other thunk is not executed. Different thunks should be considered as different units. Executing another unit should be part of an [integration test](#recipe---integration-tests-for-the-entire-store), not a unit test.
+
+* If the tested thunk dispatches another thunk, you cannot set expectations on the arguments given to the other thunk. Different thunks should be considered as different units. Testing the interfaces between them should be part of an [integration test](#recipe---integration-tests-for-the-entire-store), not a unit test. 
+
+* If the tested thunk dispatches another thunk, you cannot mock the return value of the other thunk. Relying in your implementation on the return value of another thunk is considered bad practice. If you must test that, you should probably be changing your implementation.
+
+> These limitations may seem annoying, but they stem from best practices. If they disrupt your test, it's usually a sign of a code smell in your implementation. Fix the implementation, don't fight to test a bad practice.
 
 <br>
 
