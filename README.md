@@ -72,21 +72,23 @@ A redux reducer is a pure function that takes an action object, with a `type` fi
 
 #### `Reducer(reducer, state).expect(action).toChangeInState(changes)`
 
-* Runs the `reducer` on current `state` providing an `action`. The current `state` argument is optional, if not provided uses initial state. Makes sure the part that changed in the returned state matches `changes` and the rest of the state hasn't changed. The format of `changes` is partial state, even a deep internal object - it is compared to returned state after running [`_.merge(originalState, changes)`](https://lodash.com/docs/#merge).
+* Runs the `reducer` on current `state` providing an `action`. The current `state` argument is optional, if not provided uses initial state. Makes sure the part that changed in the returned state matches `changes` and the rest of the state hasn't changed. The format of `changes` is partial state, even a deep internal object - it is compared to returned state after [merging](https://lodash.com/docs/#merge) the changes with the original state (objects are deep merged, arrays are replaced).
 
 * Also verifies immutability of the `state`.
 
-* *The added value of this API compared to `toReturnState` is when your state object is very large and you prefer to reduce the boilerplate of preparing the entire `result` by yourself.*
+> *The added value of this API compared to `toReturnState` is when your state object is very large and you prefer to reduce the boilerplate of preparing the entire `result` by yourself.*
 
 > [See some examples of this API](API-EXAMPLES.md#reducerreducer-stateexpectactiontochangeinstatechanges)
 
 #### `Reducer(reducer, state).execute(action)`
 
-* Runs the `reducer` on current `state` providing an `action`. The current `state` argument is optional, if not provided uses initial state. Returns the returned state so you can run expectations manually. It's not recommended to use this API directly because you usually won't verify that parts in the returned state that were not supposed to change, indeed did not change.
+* Runs the `reducer` on current `state` providing an `action`. The current `state` argument is optional, if not provided uses initial state.
+
+* Returns the returned state so you can run expectations manually. It's not recommended to use this API directly because you usually won't verify that parts in the returned state that were not supposed to change, indeed did not change.
 
 * Also verifies immutability of the `state`.
 
-* *The added value of this API compared to the others is that it allows you to run your own custom expectations (which isn't recommended).*
+> *The added value of this API compared to the others is that it allows you to run your own custom expectations (which isn't recommended).*
 
 > [See some examples of this API](API-EXAMPLES.md#reducerreducer-stateexecuteaction)
 
@@ -130,11 +132,13 @@ A redux selector is a pure function that takes the state and computes some deriv
 
 #### `Selector(selector).execute(state, ...args)`
 
-* Runs the `selector` function on a given `state`. If the selector takes more arguments, provide them at `...args` (the state is always assumed to be the first argument of a selector). Returns the returned state so you can run expectations manually.
+* Runs the `selector` function on a given `state`. If the selector takes more arguments, provide them at `...args` (the state is always assumed to be the first argument of a selector). 
+
+* Returns the returned state so you can run expectations manually.
 
 * Also verifies that `state` did not mutate.
 
-* *The added value of this API compared to the others is that it allows you to run your own custom expectations.*
+> *The added value of this API compared to the others is that it allows you to run your own custom expectations.*
 
 > [See some examples of this API](API-EXAMPLES.md#selectorselectorexecutestate-args)
 
