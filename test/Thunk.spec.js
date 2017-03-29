@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import uut from '../src/Thunk';
 
 const asyncFunction = () => new Promise((res) => setTimeout(res, 100));
@@ -37,7 +36,7 @@ const thunkAction2 = () => {
 
 const actionThatUsesState = (dispatch, getState) => {
   const {extraData} = getState();
-  dispatch(_.merge({}, action1, {extraData}));
+  dispatch({...action1, extraData});
 };
 
 describe('Thunk teskit tool', () => {
@@ -86,7 +85,7 @@ describe('Thunk teskit tool', () => {
 
     expect(dispatches[0].isFunction()).toBe(true);
     expect(dispatches[0].getName()).toBe('action5');
-    
+
     expect(dispatches[1].isFunction()).toBe(true);
     expect(dispatches[1].getAction()).toBe(action4);
   });
