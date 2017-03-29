@@ -1,4 +1,4 @@
-import {ActionTest, ReducerTest, Reducer, Selector} from './../dist/index';
+import {ActionTest, ReducerTest, Reducer, Selector, Thunk} from './../dist/index';
 
 describe('index', () => {
   it('exposes ActionTest', () => {
@@ -21,5 +21,11 @@ describe('index', () => {
 describe('index', () => {
   it('exposes Selector', () => {
     expect(Selector).toBeDefined();
+  });
+});
+
+describe('index', () => {
+  it('exposes Thunk', () => {
+    expect(Thunk).toBeDefined();
   });
 });
