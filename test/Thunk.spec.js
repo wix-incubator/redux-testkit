@@ -28,6 +28,13 @@ const thunkAction = () => {
   };
 };
 
+const thunkAction2 = () => {
+  return async function action6(dispatch, getState) {
+    await dispatch(thunkAction());
+    dispatch(action4);
+  };
+};
+
 const actionThatUsesState = (dispatch, getState) => {
   const {extraData} = getState();
   dispatch(_.merge({}, action1, {extraData}));
@@ -71,6 +78,17 @@ describe('Thunk teskit tool', () => {
 
     expect(dispatches[2].isFunction()).toBe(true);
     expect(dispatches[2].getAction()).toBe(action4);
+  });
+
+  it('should support awaiting async thunk actions creators', async () => {
+    const dispatches = await uut(thunkAction2()).execute();
+    expect(dispatches.length).toBe(2);
+
+    expect(dispatches[0].isFunction()).toBe(true);
+    expect(dispatches[0].getName()).toBe('action5');
+    
+    expect(dispatches[1].isFunction()).toBe(true);
+    expect(dispatches[1].getAction()).toBe(action4);
   });
 
   it('should acknowledge passed state inside dispatched actions', async () => {
