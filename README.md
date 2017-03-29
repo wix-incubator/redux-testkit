@@ -234,6 +234,77 @@ export function refreshSession() {
 
 <br>
 
+## Recipe - Integration tests for the entire store
+
+```js
+import { createStore, applyMiddleware, combineReducers } from 'redux';
+import thunk from 'redux-thunk';
+import { FlushThunks } from 'redux-testkit';
+
+import * as reducers from '../reducers';
+import * as postsSelectors from '../posts/reducer';
+import * as uut from '../posts/actions';
+
+describe('posts store integration', () => {
+
+  let store, flushThunks, redditService;
+  
+  beforeEach(() => {
+    jest.resetAllMocks();
+    jest.resetModules();
+    jest.mock('../../services/reddit');
+    redditService = require('../../services/reddit');
+    // create a store with flushThunks added as the first middleware
+    flushThunks = FlushThunks.createMiddleware();
+    store = createStore(combineReducers(reducers), applyMiddleware(flushThunks, thunk));
+  });
+  
+  it('should select posts', () => {
+    expect(postsSelectors.getSelectedPost(store.getState())).toEqual([]);
+    store.dispatch(uut.selectPost('post1'));
+    expect(postsSelectors.getSelectedPost(store.getState())).toEqual(['post1']);
+    store.dispatch(uut.selectPost('post2'));
+    expect(postsSelectors.getSelectedPost(store.getState())).toEqual(['post1', 'post2']);
+  });
+  
+  it('should fetch posts from server', async () => {
+    redditService.getPostsBySubreddit.mockReturnValueOnce(['post1', 'post2']);
+    expect(postsSelectors.getPostsLoading(store.getState())).toBe(false);
+    expect(postsSelectors.getPosts(store.getState())).toEqual([]);
+    await store.dispatch(uut.fetchPosts());
+    expect(postsSelectors.getPostsLoading(store.getState())).toBe(false);
+    expect(postsSelectors.getPosts(store.getState())).toEqual(['post1', 'post2']);
+  });
+
+  it('should test a thunk that dispatches another thunk', async () => {
+    expect(postsSelectors.isForeground(store.getState())).toBe(false);
+    await store.dispatch(uut.initApp()); // this dispathces thunk appOnForeground
+    await flushThunks.flush(); // wait until all async thunks resolve
+    expect(postsSelectors.isForeground(store.getState())).toBe(true);
+  });
+
+});
+
+```
+
+Integration test for the entire store creates a real redux store with an extra flushThunks middleware. Test starts by dispatching an action / thunk. Expectations are set over the final state using selectors.
+
+#### `flushThunks = FlushThunks.createMiddleware()`
+
+* Creates `flushThunks` middleware which should be applied to the store on creation. This middleware is useful for the case where one thunk dispatches another thunk. It allows to wait until all of the thunk promises have been resolved.
+
+* Returns a `flushThunks` instance which has the following methods:
+
+##### `flushThunks.flush()`
+
+* Flushes all asynchronous thunks. Run `await` on this method to wait until all dispatched thunk promises are resolved.
+
+##### `flushThunks.reset()`
+
+* Call this method to reset the list of thunk promises observed by `flushThunks`.
+
+<br>
+
 ## Building and testing this library
 
 This section is relevant only if you want to contribute to this library or build it locally.
