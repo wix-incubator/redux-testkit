@@ -1,7 +1,9 @@
 import _ from 'lodash';
+import * as utils from './utils';
 
 let dispatches = [];
 let state;
+let originalState;
 let error;
 
 function createDispatchedObject(action) {
@@ -19,8 +21,8 @@ function getState() {
 }
 
 async function dispatch(action) {
-  if (!_.isFunction(action) && !_.isPlainObject()) {
-    error = new Error('Unsupported action type sent to dispatch');
+  if (!_.isFunction(action) && !_.isPlainObject(action)) {
+    error = new Error(`Unsupported ${action} action type sent to dispatch`);
   }
 
   dispatches.push(createDispatchedObject(action));
@@ -28,7 +30,7 @@ async function dispatch(action) {
 
 async function executeDispatch(action) {
   if (_.isFunction(action)) {
-    const result = action(dispatch, getState);
+    const result = await action(dispatch, getState);
     return Promise.resolve(result);
   }
 
@@ -36,15 +38,29 @@ async function executeDispatch(action) {
   return null;
 }
 
+function checkForStateMutation() {
+  const mutated = !utils.deepEqual(state, originalState);
+  
+  if (mutated) {
+    error = new Error('State mutation is not valid inside an action');
+  }
+}
+
 // todo: handle immutability
 export default function(thunkFunction, storeState) {
   dispatches = [];
   state = storeState;
+  originalState = _.cloneDeep(storeState);
   error = undefined;
 
   return {
     execute: async () => {
       await executeDispatch(thunkFunction);
+      checkForStateMutation();
+
+      if (error) {
+        throw error;
+      }
       return dispatches;
     }
   };

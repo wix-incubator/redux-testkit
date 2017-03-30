@@ -39,6 +39,12 @@ const actionThatUsesState = (dispatch, getState) => {
   dispatch({...action1, extraData});
 };
 
+const actionThatMutateState = (dispatch, getState) => {
+  const state = getState();
+  state.extraData = 'mutating state';
+  dispatch({...action1});
+};
+
 describe('Thunk teskit tool', () => {
   it('should contain dispatch actions of plain objects', async () => {
     const dispatches = await uut(action3).execute();
@@ -96,5 +102,15 @@ describe('Thunk teskit tool', () => {
 
     expect(dispatches.length).toBe(1);
     expect(dispatches[0].getAction().extraData).toBe(state.extraData);
+  });
+
+  it('should throw an error if state mutation occurred', async () => {
+    const state = {extraData: 'EXTRA_DATA!'};
+    try {
+      await uut(actionThatMutateState, state).execute();
+      expect(true).toBe(false);
+    } catch (error) {
+      expect(error).toEqual(new Error('State mutation is not valid inside an action'));
+    }
   });
 });
