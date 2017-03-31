@@ -4,50 +4,54 @@ const asyncFunction = () => new Promise((res) => setTimeout(res, 100));
 const action1 = {type: 'EVENT_1', data: 'DATA1!'};
 const action2 = {type: 'EVENT_2', data: 'DATA2!'};
 
-const actionCreator1 = () => {
-  return action1;
+const thunk1 = () => {
+  return function action3(dispatch, getState) {
+    dispatch(action1);
+    dispatch(action2);
+  };
 };
 
-const action3 = (dispatch, getState) => {
-  dispatch(action1);
-  dispatch(action2);
+const thunk2 = () => {
+  return function action4(dispatch, getState) {
+    dispatch(action1);
+    dispatch(thunk1());
+  };
 };
 
-const action4 = (dispatch, getState) => {
-  dispatch(action1);
-  dispatch(action3);
-};
 
-const thunkAction = () => {
+const thunk3 = () => {
   return async function action5(dispatch, getState) {
-    dispatch(action3);
+    dispatch(thunk1());
     await asyncFunction();
-    dispatch(thunkAction());
-    dispatch(action4);
+    dispatch(thunk2());
   };
 };
 
-const thunkAction2 = () => {
+const thunk4 = () => {
   return async function action6(dispatch, getState) {
-    await dispatch(thunkAction());
-    dispatch(action4);
+    await dispatch(thunk3());
+    dispatch(action1);
   };
 };
 
-const actionThatUsesState = (dispatch, getState) => {
-  const {extraData} = getState();
-  dispatch({...action1, extraData});
+const actionThatUsesState = () => {
+  return function action7(dispatch, getState) {
+    const {extraData} = getState();
+    dispatch({...action1, extraData});
+  };
 };
 
-const actionThatMutateState = (dispatch, getState) => {
-  const state = getState();
-  state.extraData = 'mutating state';
-  dispatch({...action1});
+const actionThatMutateState = () => {
+  return function action8(dispatch, getState) {
+    const state = getState();
+    state.extraData = 'mutating state';
+    dispatch({...action1});
+  };
 };
 
 describe('Thunk teskit tool', () => {
   it('should contain dispatch actions of plain objects', async () => {
-    const dispatches = await uut(action3).execute();
+    const dispatches = await uut(thunk1).execute();
     expect(dispatches.length).toBe(2);
 
     expect(dispatches[0].isPlainObject()).toBe(true);
@@ -60,7 +64,7 @@ describe('Thunk teskit tool', () => {
   });
 
   it('should handle dispatched actions of functions and plain objects', async () => {
-    const dispatches = await uut(action4).execute();
+    const dispatches = await uut(thunk2).execute();
     expect(dispatches.length).toBe(2);
 
     expect(dispatches[0].isPlainObject()).toBe(true);
@@ -68,32 +72,29 @@ describe('Thunk teskit tool', () => {
     expect(dispatches[0].getAction()).toEqual(action1);
 
     expect(dispatches[1].isFunction()).toBe(true);
-    expect(dispatches[1].getAction()).toBe(action3);
+    expect(dispatches[1].getName()).toBe('action3');
   });
 
   it('should support async thunk actions creators', async () => {
-    const dispatches = await uut(thunkAction()).execute();
-    expect(dispatches.length).toBe(3);
+    const dispatches = await uut(thunk3).execute();
+    expect(dispatches.length).toBe(2);
 
     expect(dispatches[0].isFunction()).toBe(true);
-    expect(dispatches[0].getAction()).toBe(action3);
+    expect(dispatches[0].getName()).toBe('action3');
 
     expect(dispatches[1].isFunction()).toBe(true);
-    expect(dispatches[1].getName()).toBe('action5');
-
-    expect(dispatches[2].isFunction()).toBe(true);
-    expect(dispatches[2].getAction()).toBe(action4);
+    expect(dispatches[1].getName()).toBe('action4');
   });
 
   it('should support awaiting async thunk actions creators', async () => {
-    const dispatches = await uut(thunkAction2()).execute();
+    const dispatches = await uut(thunk4).execute();
     expect(dispatches.length).toBe(2);
 
     expect(dispatches[0].isFunction()).toBe(true);
     expect(dispatches[0].getName()).toBe('action5');
 
-    expect(dispatches[1].isFunction()).toBe(true);
-    expect(dispatches[1].getAction()).toBe(action4);
+    expect(dispatches[1].isPlainObject()).toBe(true);
+    expect(dispatches[1].getAction()).toBe(action1);
   });
 
   it('should acknowledge passed state inside dispatched actions', async () => {

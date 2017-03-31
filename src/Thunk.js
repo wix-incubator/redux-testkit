@@ -55,8 +55,12 @@ export default function(thunkFunction, storeState) {
 
   return {
     execute: async () => {
-      await executeDispatch(thunkFunction);
-      checkForStateMutation();
+      if (_.isFunction(thunkFunction)) {
+        await executeDispatch(thunkFunction());
+        checkForStateMutation();
+      } else {
+        error = new Error('Thunk testkit only accept a thunk function');
+      }
 
       if (error) {
         throw error;
