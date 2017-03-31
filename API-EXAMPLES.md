@@ -124,16 +124,14 @@ describe('numbers selectors', () => {
 
 ```js
 import { Thunk } from 'redux-testkit';
+import * as uut from '../actions';
+import redditService from '../../../services/reddit';
+jest.mock('../../../services/reddit');
 
 describe('posts actions', () => {
 
-  let uut, redditService;
-
   beforeEach(() => {
-    // mock redditService and define uut after
-    jest.mock('../../../services/reddit');
-    redditService = require('../../../services/reddit');
-    uut = require('../actions');
+    jest.resetAllMocks();
   });
 
   it('should clear all posts', () => {
@@ -164,10 +162,6 @@ describe('posts actions', () => {
     expect(dispatches.length).toBe(1);
     expect(dispatches[0].isFunction()).toBe(true);
     expect(dispatches[0].getName()).toEqual('refreshSession');
-  });
-
-  afterEach(() => {
-    jest.resetAllMocks().resetModules();
   });
 
 });

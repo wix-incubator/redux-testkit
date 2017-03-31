@@ -145,37 +145,19 @@ A redux selector is a pure function that takes the state and computes some deriv
 ```js
 import { Thunk } from 'redux-testkit';
 import * as uut from '../actions';
+import redditService from '../../../services/reddit';
+jest.mock('../../../services/reddit');
 
 describe('posts actions', () => {
+
+  beforeEach(() => {
+    jest.resetAllMocks();
+  });
 
   it('should clear all posts', () => {
     const dispatches = Thunk(uut.clearPosts).execute();
     expect(dispatches.length).toBe(1);
     expect(dispatches[0].getAction()).toEqual({ type: 'POSTS_UPDATED', posts: [] });
-  });
-
-  it('should filter posts (async)', async () => {
-    const state = { loading: false, posts: ['funny1', 'scary2', 'funny3'] };
-    const dispatches = await Thunk(uut.filterPosts).withState(state).execute('funny');
-    expect(dispatches.length).toBe(1);
-    expect(dispatches[0].getAction()).toEqual({ type: 'POSTS_UPDATED', posts: ['funny1', 'funny3'] });
-  });
-
-});
-```
-
-```js
-import { Thunk } from 'redux-testkit';
-
-describe('posts actions (with service mock)', () => {
-
-  let uut, redditService;
-
-  beforeEach(() => {
-    // mock redditService and define uut after
-    jest.mock('../../../services/reddit');
-    redditService = require('../../../services/reddit');
-    uut = require('../actions');
   });
 
   it('should fetch posts from server', async () => {
@@ -187,8 +169,11 @@ describe('posts actions (with service mock)', () => {
     expect(dispatches[2].getAction()).toEqual({ type: 'POSTS_LOADING', loading: false });
   });
 
-  afterEach(() => {
-    jest.resetAllMocks().resetModules();
+  it('should filter posts', () => {
+    const state = { loading: false, posts: ['funny1', 'scary2', 'funny3'] };
+    const dispatches = Thunk(uut.filterPosts).withState(state).execute('funny');
+    expect(dispatches.length).toBe(1);
+    expect(dispatches[0].getAction()).toEqual({ type: 'POSTS_UPDATED', posts: ['funny1', 'funny3'] });
   });
 
 });
@@ -251,18 +236,18 @@ import thunk from 'redux-thunk';
 import { FlushThunks } from 'redux-testkit';
 
 import * as reducers from '../reducers';
+import * as uut from '../posts/actions';
 import * as postsSelectors from '../posts/reducer';
+import redditService from '../../services/reddit';
+jest.mock('../../services/reddit');
 
 describe('posts store integration', () => {
 
-  let uut, redditService, flushThunks, store;
+  let flushThunks, store;
 
   beforeEach(() => {
-    // mock redditService and define uut after
-    jest.mock('../../services/reddit');
-    redditService = require('../../services/reddit');
-    uut = require('../posts/actions');
-    // create a store with flushThunks added as the first middleware
+    jest.resetAllMocks();
+    // create a redux store with flushThunks added as the first middleware
     flushThunks = FlushThunks.createMiddleware();
     store = createStore(combineReducers(reducers), applyMiddleware(flushThunks, thunk));
   });
@@ -289,10 +274,6 @@ describe('posts store integration', () => {
     await store.dispatch(uut.initApp()); // this dispathces thunk appOnForeground
     await flushThunks.flush(); // wait until all async thunks resolve
     expect(postsSelectors.isForeground(store.getState())).toBe(true);
-  });
-
-  afterEach(() => {
-    jest.resetAllMocks().resetModules();
   });
 
 });
