@@ -1,31 +1,23 @@
-import {ActionTest, ReducerTest, Reducer, Selector, Thunk} from './../dist/index';
-
-describe('index', () => {
-  it('exposes ActionTest', () => {
-    expect(ActionTest).toBeDefined();
-  });
-});
-
-describe('index', () => {
-  it('exposes ReducerTest', () => {
-    expect(ReducerTest).toBeDefined();
-  });
-});
+import {Reducer, Selector, Thunk, FlushThunks} from './../dist/index';
 
 describe('index', () => {
   it('exposes Reducer', () => {
     expect(Reducer).toBeDefined();
   });
-});
 
-describe('index', () => {
   it('exposes Selector', () => {
     expect(Selector).toBeDefined();
   });
-});
 
-describe('index', () => {
   it('exposes Thunk', () => {
     expect(Thunk).toBeDefined();
+  });
+
+  it('exposes Thunk', () => {
+    expect(Thunk).toBeDefined();
+  });
+
+  it('exposes FlushThunks', () => {
+    expect(FlushThunks).toBeDefined();
   });
 });
