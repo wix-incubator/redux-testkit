@@ -17,6 +17,8 @@
 * *Unit tests* for [action handlers (thunks)](https://github.com/gaearon/redux-thunk) - test recipe [here](#recipe---unit-testing-thunks)
 * *Integration tests* for the entire [store](http://redux.js.org/docs/basics/Store.html) - test recipe [here](#recipe---integration-tests-for-the-entire-store)
 
+This library mostly provides syntactic sugar and makes testing Redux fun with less boilerplate. You can naturally test all Redux constructs without this library, but you will miss out on features like automatic immutability checks.
+
 <br>
 
 ## Installation
