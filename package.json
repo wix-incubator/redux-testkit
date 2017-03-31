@@ -1,10 +1,10 @@
 {
   "name": "redux-testkit",
-  "version": "0.1.22",
+  "version": "1.0.0",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
-  "description": "Test kit for redux",
+  "description": "Complete and opinionated testkit for testing Redux projects (reducers, selectors, actions, thunks)",
   "author": "Yedidya Kennard <yedidyak@gmail.com>",
   "license": "MIT",
   "repository": {
