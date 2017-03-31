@@ -132,7 +132,7 @@ describe('posts actions', () => {
   let uut, redditService;
 
   beforeEach(() => {
-    // mock redditService and define uut
+    // mock redditService and define uut after
     jest.mock('../../../services/reddit');
     redditService = require('../../../services/reddit');
     uut = require('../actions');
