@@ -53,7 +53,8 @@ function reversePostsThunk() {
 
 describe('thunk bug', () => {
   it('should not mutate state', async () => {
-    const dispatches = await thunk(reversePostsThunk, {posts: ['post1', 'post2']}).execute();
+    const state = {posts: ['post1', 'post2']};
+    const dispatches = await thunk(reversePostsThunk).withState(state).execute();
     expect(dispatches.length).toBe(1);
     expect(dispatches[0].getType()).toEqual('UPDATE_POSTS');
   });

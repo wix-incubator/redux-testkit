@@ -2,7 +2,7 @@
 
 ## Reducer
 
-### `Reducer(reducer, state).expect(action).toReturnState(result)`
+### `Reducer(reducer).withState(state).expect(action).toReturnState(result)`
 
 ```js
 import { Reducer } from 'redux-testkit';
@@ -20,7 +20,7 @@ describe('counter reducer', () => {
     const action = { type: 'INCREMENT' };
     const state = { counter: 1 };
     const result = { counter: 2 };
-    Reducer(uut, state).expect(action).toReturnState(result);
+    Reducer(uut).withState(state).expect(action).toReturnState(result);
   });
 
   it('should handle COMPLEX action on complex state', () => {
@@ -28,7 +28,7 @@ describe('counter reducer', () => {
     const action = { type: 'COMPLEX' };
     const state = { ...initialState, value: 'before' };
     const result = { ...initialState, value: 'after' };
-    Reducer(uut, state).expect(action).toReturnState(result);
+    Reducer(uut).withState(state).expect(action).toReturnState(result);
   });
 
 });
@@ -36,7 +36,7 @@ describe('counter reducer', () => {
 
 <br>
 
-### `Reducer(reducer, state).expect(action).toChangeInState(changes)`
+### `Reducer(reducer).withState(state).expect(action).toChangeInState(changes)`
 
 ```js
 import { Reducer } from 'redux-testkit';
@@ -48,7 +48,7 @@ describe('person reducer', () => {
     const action = { type: 'UPDATE_NAME', newName: 'John' };
     const state = { person: { name: 'Bill', age: 35, height: 1.85 } };
     const changes = { person: { name: 'John' } };
-    Reducer(uut, state).expect(action).toChangeInState(changes);
+    Reducer(uut).withState(state).expect(action).toChangeInState(changes);
   });
 
 });
@@ -56,7 +56,7 @@ describe('person reducer', () => {
 
 <br>
 
-### `Reducer(reducer, state).execute(action)`
+### `Reducer(reducer).withState(state).execute(action)`
 
 ```js
 import { Reducer } from 'redux-testkit';
@@ -67,7 +67,7 @@ describe('movies reducer', () => {
   it('should handle ADD_MOVIE action on existing state with custom expectations', () => {
     const action = { type: 'ADD_MOVIE', name: 'Frozen' };
     const state = { movies: [] };
-    const result = Reducer(uut, state).execute(action);
+    const result = Reducer(uut).withState(state).execute(action);
     expect(result.movies.length).toEqual(1);
     expect(result.movies).toContain('Frozen');
   });
@@ -122,7 +122,7 @@ describe('numbers selectors', () => {
 
 ## Thunk
 
-### `Thunk(thunk, state).execute(...args)`
+### `Thunk(thunk).withState(state).execute(...args)`
 
 ```js
 import { Thunk } from 'redux-testkit';
@@ -151,7 +151,7 @@ describe('posts actions', () => {
 
   it('should filter posts', () => {
     const state = { loading: false, posts: ['funny1', 'scary2', 'funny3'] };
-    const dispatches = await Thunk(uut.filterPosts, state).execute('funny');
+    const dispatches = await Thunk(uut.filterPosts).withState(state).execute('funny');
     expect(dispatches.length).toBe(1);
     expect(dispatches[0].getAction()).toEqual({ type: 'POSTS_UPDATED', posts: ['funny1', 'funny3'] });
   });

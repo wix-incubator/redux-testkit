@@ -51,11 +51,11 @@ describe('Reducer testkit tool', () => {
 
   describe('toReturnState: given initial state', () => {
     it('should reducer work with given initial state', () => {
-      uut(counterReducer, {value: 2}).expect(ADD_ACTION).toReturnState({value: 2 + ADD_ACTION.value});
+      uut(counterReducer).withState({value: 2}).expect(ADD_ACTION).toReturnState({value: 2 + ADD_ACTION.value});
     });
     // this test suppose to fail
     it('should fail test with given initial state on mutating reducer', () => {
-      // uut(mutatingCounterReducer, {value: 6}).expect(SUBTRACT_ACTION).toReturnState({value: 6 - SUBTRACT_ACTION.value});
+      // uut(mutatingCounterReducer).setState({value: 6}).expect(SUBTRACT_ACTION).toReturnState({value: 6 - SUBTRACT_ACTION.value});
     });
   });
 
@@ -86,24 +86,24 @@ describe('Reducer testkit tool', () => {
 
     it('should test state collection-content mutation with given initial state with inexplicit fields', () => {
       uut(reducerWithExtra).expect(SET_ACTION).toChangeInState({a: {b: {c: 'hello'}}});
-      uut(reducerWithExtra, {name: 'john'}).expect(SET_ACTION).toChangeInState({a: {b: {c: 'hello'}}});
-      uut(reducerWithExtra, {name: 'john'}).expect(SET_ACTION).toReturnState({name: 'john', a: {b: {c: 'hello'}}});
-      uut(reducerWithExtra, {a: {b: {d: 'world'}}}).expect(SET_ACTION).toChangeInState({a: {b: {c: 'hello'}}});
-      uut(reducerWithExtra, {a: {b: {d: 'world'}}}).expect(SET_ACTION).toReturnState({a: {b: {c: 'hello', d: 'world'}}});
+      uut(reducerWithExtra).withState({name: 'john'}).expect(SET_ACTION).toChangeInState({a: {b: {c: 'hello'}}});
+      uut(reducerWithExtra).withState({name: 'john'}).expect(SET_ACTION).toReturnState({name: 'john', a: {b: {c: 'hello'}}});
+      uut(reducerWithExtra).withState({a: {b: {d: 'world'}}}).expect(SET_ACTION).toChangeInState({a: {b: {c: 'hello'}}});
+      uut(reducerWithExtra).withState({a: {b: {d: 'world'}}}).expect(SET_ACTION).toReturnState({a: {b: {c: 'hello', d: 'world'}}});
     });
 
     it('should test state arrays mutation with given initial state with inexplicit fields', () => {
       uut(reducerWithExtra).expect(SET_ARRAY_ACTION).toChangeInState({a: {b: [1, 2]}});
-      uut(reducerWithExtra, {a: {b: [-1, -2]}}).expect(SET_ARRAY_ACTION).toChangeInState({a: {b: [1, 2]}});
-      uut(reducerWithExtra, {a: {b: [-1, -2]}}).expect(SET_ARRAY_ACTION).toReturnState({a: {b: [1, 2]}});
+      uut(reducerWithExtra).withState({a: {b: [-1, -2]}}).expect(SET_ARRAY_ACTION).toChangeInState({a: {b: [1, 2]}});
+      uut(reducerWithExtra).withState({a: {b: [-1, -2]}}).expect(SET_ARRAY_ACTION).toReturnState({a: {b: [1, 2]}});
     });
 
     // This tests a sensitive spot of *change-based* verification when arrays are involved, as lodash.merge() acts
     // different with arrays than it does with collections. With collection, a deep copy is performed, while with arrays -
     // as by default, an actual element-by-element *merge* is done, which isn't what we expect from toChangeInState().
     it('should verify arrays mutation is done in an assignment-like and not merge-like strategy', () => {
-      uut(reducerWithExtra, {a: {b: [-1, -2, -3]}}).expect(SET_ARRAY_ACTION).toChangeInState({a: {b: [1, 2]}});
-      uut(reducerWithExtra, {a: {b: [-1, -2, -3]}}).expect(SET_ARRAY_ACTION).toReturnState({a: {b: [1, 2]}});
+      uut(reducerWithExtra).withState({a: {b: [-1, -2, -3]}}).expect(SET_ARRAY_ACTION).toChangeInState({a: {b: [1, 2]}});
+      uut(reducerWithExtra).withState({a: {b: [-1, -2, -3]}}).expect(SET_ARRAY_ACTION).toReturnState({a: {b: [1, 2]}});
     });
 
     it('should fail test if content change overlooked', () => {
@@ -111,12 +111,12 @@ describe('Reducer testkit tool', () => {
       global.expect = (input) => ({
         toEqual: (i) => originalExpect(input).not.toEqual(i)
       });
-      uut(reducerWithExtra, {name: 'john'}).expect(SET_ACTION).toChangeInState({});
+      uut(reducerWithExtra).withState({name: 'john'}).expect(SET_ACTION).toChangeInState({});
       global.expect = originalExpect;
     });
 
     it('should fail test with given initial state on mutating reducer', () => {
-      // uut(mutatingCounterReducer, {value: 6}).expect(SUBTRACT_ACTION).toChangeInState({value: 6 - SUBTRACT_ACTION.value});
+      // uut(mutatingCounterReducer).withState({value: 6}).expect(SUBTRACT_ACTION).toChangeInState({value: 6 - SUBTRACT_ACTION.value});
     });
   });
 
@@ -138,7 +138,7 @@ describe('Reducer testkit tool', () => {
     });
     // this test suppose to fail
     it('should fail test with given initial state on mutating reducer', () => {
-      // uut(mutatingCounterReducer, {value: 6}).expect(SUBTRACT_ACTION).toReturnState({value: 6 - SUBTRACT_ACTION.value});
+      // uut(mutatingCounterReducer).withState({value: 6}).expect(SUBTRACT_ACTION).toReturnState({value: 6 - SUBTRACT_ACTION.value});
     });
   });
 

@@ -57,7 +57,7 @@ describe('counter reducer', () => {
     const action = { type: 'INCREMENT' };
     const state = { counter: 1 };
     const result = { counter: 2 };
-    Reducer(uut, state).expect(action).toReturnState(result);
+    Reducer(uut).withState(state).expect(action).toReturnState(result);
   });
 
 });
@@ -66,27 +66,27 @@ describe('counter reducer', () => {
 
 A redux reducer is a pure function that takes an action object, with a `type` field, and changes the state. In almost every case the state object itself must remain immutable.
 
-#### `Reducer(reducer, state).expect(action).toReturnState(result)`
+#### `Reducer(reducer).withState(state).expect(action).toReturnState(result)`
 
-* Runs the `reducer` on current `state` providing an `action`. The current `state` argument is optional, if not provided uses initial state. Makes sure the returned state is `result`.
+* Runs the `reducer` on current `state` providing an `action`. Calling `withState()` is optional, if not provided, initial state is used. Makes sure the returned state is `result`.
 
 * Also verifies immutability - that `state` did not mutate. [Why is this important? see example bug](BUG-EXAMPLES.md#reducer)
 
-> [See some examples of this API](API-EXAMPLES.md#reducerreducer-stateexpectactiontoreturnstateresult)
+> [See some examples of this API](API-EXAMPLES.md#reducerreducerwithstatestateexpectactiontoreturnstateresult)
 
-#### `Reducer(reducer, state).expect(action).toChangeInState(changes)`
+#### `Reducer(reducer).withState(state).expect(action).toChangeInState(changes)`
 
-* Runs the `reducer` on current `state` providing an `action`. The current `state` argument is optional, if not provided uses initial state. Makes sure the part that changed in the returned state matches `changes` and the rest of the state hasn't changed. The format of `changes` is partial state, even a deep internal object - it is compared to returned state after [merging](https://lodash.com/docs/#merge) the changes with the original state (objects are deep merged, arrays are replaced).
+* Runs the `reducer` on current `state` providing an `action`. Calling `withState()` is optional, if not provided, initial state is used. Makes sure the part that changed in the returned state matches `changes` and the rest of the state hasn't changed. The format of `changes` is partial state, even a deep internal object - it is compared to returned state after [merging](https://lodash.com/docs/#merge) the changes with the original state (objects are deep merged, arrays are replaced).
 
 * Also verifies immutability of the `state`.
 
 > *The added value of this API compared to `toReturnState` is when your state object is very large and you prefer to reduce the boilerplate of preparing the entire `result` by yourself.*
 
-> [See some examples of this API](API-EXAMPLES.md#reducerreducer-stateexpectactiontochangeinstatechanges)
+> [See some examples of this API](API-EXAMPLES.md#reducerreducerwithstatestateexpectactiontochangeinstatechanges)
 
-#### `Reducer(reducer, state).execute(action)`
+#### `Reducer(reducer).withState(state).execute(action)`
 
-* Runs the `reducer` on current `state` providing an `action`. The current `state` argument is optional, if not provided uses initial state.
+* Runs the `reducer` on current `state` providing an `action`. Calling `withState()` is optional, if not provided, initial state is used.
 
 * Returns the returned state so you can run expectations manually. It's not recommended to use this API directly because you usually won't verify that parts in the returned state that were not supposed to change, indeed did not change.
 
@@ -94,7 +94,7 @@ A redux reducer is a pure function that takes an action object, with a `type` fi
 
 > *The added value of this API compared to the others is that it allows you to run your own custom expectations (which isn't recommended).*
 
-> [See some examples of this API](API-EXAMPLES.md#reducerreducer-stateexecuteaction)
+> [See some examples of this API](API-EXAMPLES.md#reducerreducerwithstatestateexecuteaction)
 
 <br>
 
@@ -118,19 +118,11 @@ describe('numbers selectors', () => {
 
 A redux selector is a pure function that takes the state and computes some derivation from it. This operation is read-only and the state object itself must not change.
 
-#### `Selector(selector).expect(state).toReturn(result)`
-
-* Runs the `selector` function on a given `state`. Makes sure the returned result is `result`.
-
-* Also verifies that `state` did not mutate. [Why is this important? see example bug](BUG-EXAMPLES.md#selector)
-
-> [See some examples of this API](API-EXAMPLES.md#selectorselectorexpectstate-argstoreturnresult)
-
 #### `Selector(selector).expect(state, ...args).toReturn(result)`
 
 * Runs the `selector` function on a given `state`. If the selector takes more arguments, provide them at `...args` (the state is always assumed to be the first argument of a selector). Makes sure the returned result is `result`.
 
-* Also verifies that `state` did not mutate.
+* Also verifies that `state` did not mutate. [Why is this important? see example bug](BUG-EXAMPLES.md#selector)
 
 > [See some examples of this API](API-EXAMPLES.md#selectorselectorexpectstate-argstoreturnresult)
 
@@ -176,7 +168,7 @@ describe('posts actions', () => {
 
   it('should filter posts', () => {
     const state = { loading: false, posts: ['funny1', 'scary2', 'funny3'] };
-    const dispatches = await Thunk(uut.filterPosts, state).execute('funny');
+    const dispatches = await Thunk(uut.filterPosts).withState(state).execute('funny');
     expect(dispatches.length).toBe(1);
     expect(dispatches[0].getAction()).toEqual({ type: 'POSTS_UPDATED', posts: ['funny1', 'funny3'] });
   });
@@ -187,15 +179,15 @@ describe('posts actions', () => {
 
 A redux thunk wraps a synchronous or asynchronous function that performs an action. It can dispatch other actions (either plain objects or other thunks). It can also perform side effects like accessing servers.
 
-#### `Thunk(thunk, state).execute(...args)`
+#### `Thunk(thunk).withState(state).execute(...args)`
 
-* Runs the thunk `thunk` on current `state` given optional arguments `...args`. The current `state` argument is optional, no need to provide it if the thunk doesn't call `getState()`.
+* Runs the thunk `thunk` on current `state` given optional arguments `...args`. Calling `withState()` is optional, no need to provide it if the internal thunk implementation doesn't call `getState()`.
 
 * Returns an awaitable array of dispatches performed by the thunk (shallow, these dispatches are not executed). You can run expectations over them manually. Always `await` on the result to get the actual dispatches array.
 
 * Also verifies that `state` did not mutate. [Why is this important? see example bug](BUG-EXAMPLES.md#thunk)
 
-> [See some examples of this API](API-EXAMPLES.md#thunkthunk-stateexecuteargs)
+> [See some examples of this API](API-EXAMPLES.md#thunkthunkwithstatestateexecuteargs)
 
 ##### Available expectations over a dispatch
 

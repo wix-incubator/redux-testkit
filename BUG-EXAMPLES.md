@@ -106,7 +106,7 @@ describe('posts actions', () => {
 
   it('should reverse the list of posts in state', () => {
     const state = { posts: ['post1', 'post2'] };
-    const dispatches = await Thunk(reversePosts, state).execute();
+    const dispatches = await Thunk(reversePosts).withState(state).execute();
     expect(dispatches.length).toBe(1);
     expect(dispatches[0].getType()).toEqual('UPDATE_POSTS');
   });

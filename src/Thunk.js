@@ -46,26 +46,36 @@ function checkForStateMutation() {
   }
 }
 
-// todo: handle immutability
-export default function(thunkFunction, storeState) {
+export default function(thunkFunction) {
   dispatches = [];
-  state = storeState;
-  originalState = _.cloneDeep(storeState);
   error = undefined;
+  state = undefined;
+  originalState = undefined;
+
+  function internalThunkCommands() {
+    return {
+      execute: async () => {
+        if (_.isFunction(thunkFunction)) {
+          await executeDispatch(thunkFunction());
+          checkForStateMutation();
+        } else {
+          error = new Error('you must pass a thunk function to Thunk()');
+        }
+
+        if (error) {
+          throw error;
+        }
+        return dispatches;
+      }
+    };
+  }
 
   return {
-    execute: async () => {
-      if (_.isFunction(thunkFunction)) {
-        await executeDispatch(thunkFunction());
-        checkForStateMutation();
-      } else {
-        error = new Error('you must pass a thunk function to Thunk()');
-      }
-
-      if (error) {
-        throw error;
-      }
-      return dispatches;
-    }
+    withState(storeState) {
+      state = storeState;
+      originalState = _.cloneDeep(storeState);
+      return internalThunkCommands();
+    },
+    ...internalThunkCommands()
   };
 }

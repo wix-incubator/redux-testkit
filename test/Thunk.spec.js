@@ -98,7 +98,7 @@ describe('Thunk teskit tool', () => {
 
   it('should acknowledge passed state inside dispatched actions', async () => {
     const state = {extraData: 'EXTRA_DATA!'};
-    const dispatches = await uut(actionThatUsesState, state).execute();
+    const dispatches = await uut(actionThatUsesState).withState(state).execute();
 
     expect(dispatches.length).toBe(1);
     expect(dispatches[0].getAction().extraData).toBe(state.extraData);
@@ -107,7 +107,7 @@ describe('Thunk teskit tool', () => {
   it('should throw an error if state mutation occurred', async () => {
     const state = {extraData: 'EXTRA_DATA!'};
     try {
-      await uut(actionThatMutateState, state).execute();
+      await uut(actionThatMutateState).withState(state).execute();
       expect(true).toBe(false);
     } catch (error) {
       expect(error).toEqual(new Error('state mutated after running the thunk'));
