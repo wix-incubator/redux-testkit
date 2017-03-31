@@ -1,11 +1,6 @@
 import _ from 'lodash';
 import * as utils from './utils';
 
-let dispatches = [];
-let state;
-let originalState;
-let error;
-
 function createDispatchedObject(action) {
   return {
     isFunction: () => _.isFunction(action),
@@ -16,39 +11,37 @@ function createDispatchedObject(action) {
   };
 }
 
-function getState() {
-  return state;
-}
-
-async function dispatch(action) {
-  if (!_.isFunction(action) && !_.isPlainObject(action)) {
-    error = new Error(`unsupported ${action} action type sent to dispatch`);
-  }
-
-  dispatches.push(createDispatchedObject(action));
-}
-
-function executeDispatch(action) {
-  if (_.isFunction(action)) {
-    return action(dispatch, getState);
-  }
-  error = new Error('provided action is not a thunk function');
-  return null;
-}
-
-function checkForStateMutation() {
-  const mutated = !utils.deepEqual(state, originalState);
-
-  if (mutated) {
-    error = new Error('state mutated after running the thunk');
-  }
-}
-
 export default function(thunkFunction) {
-  dispatches = [];
-  error = undefined;
-  state = undefined;
-  originalState = undefined;
+  const dispatches = [];
+  let state;
+  let originalState;
+  let error;
+
+  function getState() {
+    return state;
+  }
+
+  async function dispatch(action) {
+    if (!_.isFunction(action) && !_.isPlainObject(action)) {
+      error = new Error(`unsupported ${action} action type sent to dispatch`);
+    }
+    dispatches.push(createDispatchedObject(action));
+  }
+
+  function executeDispatch(action) {
+    if (_.isFunction(action)) {
+      return action(dispatch, getState);
+    }
+    error = new Error('provided action is not a thunk function');
+    return null;
+  }
+
+  function checkForStateMutation() {
+    const mutated = !utils.deepEqual(state, originalState);
+    if (mutated) {
+      error = new Error('state mutated after running the thunk');
+    }
+  }
 
   function internalThunkCommands() {
     return {
