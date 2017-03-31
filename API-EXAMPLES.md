@@ -126,9 +126,17 @@ describe('numbers selectors', () => {
 
 ```js
 import { Thunk } from 'redux-testkit';
-import * as uut from '../actions';
 
 describe('posts actions', () => {
+
+  let uut, redditService;
+
+  beforeEach(() => {
+    // mock redditService and define uut
+    jest.mock('../../../services/reddit');
+    redditService = require('../../../services/reddit');
+    uut = require('../actions');
+  });
 
   it('should clear all posts', () => {
     const dispatches = Thunk(uut.clearPosts).execute();
@@ -138,10 +146,7 @@ describe('posts actions', () => {
   });
 
   it('should fetch posts from server', async () => {
-    jest.mock('../../../services/reddit');
-    const redditService = require('../../../services/reddit');
     redditService.getPostsBySubreddit.mockReturnValueOnce(['post1', 'post2']);
-
     const dispatches = await Thunk(uut.fetchPosts).execute();
     expect(dispatches.length).toBe(3);
     expect(dispatches[0].getAction()).toEqual({ type: 'POSTS_LOADING', loading: true });
@@ -161,6 +166,10 @@ describe('posts actions', () => {
     expect(dispatches.length).toBe(1);
     expect(dispatches[0].isFunction()).toBe(true);
     expect(dispatches[0].getName()).toEqual('refreshSession');
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks().resetModules();
   });
 
 });

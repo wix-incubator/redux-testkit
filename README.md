@@ -146,9 +146,17 @@ A redux selector is a pure function that takes the state and computes some deriv
 
 ```js
 import { Thunk } from 'redux-testkit';
-import * as uut from '../actions';
 
 describe('posts actions', () => {
+
+  let uut, redditService;
+
+  beforeEach(() => {
+    // mock redditService and define uut
+    jest.mock('../../../services/reddit');
+    redditService = require('../../../services/reddit');
+    uut = require('../actions');
+  });
 
   it('should clear all posts', () => {
     const dispatches = Thunk(uut.clearPosts).execute();
@@ -157,10 +165,7 @@ describe('posts actions', () => {
   });
 
   it('should fetch posts from server', async () => {
-    jest.mock('../../../services/reddit');
-    const redditService = require('../../../services/reddit');
     redditService.getPostsBySubreddit.mockReturnValueOnce(['post1', 'post2']);
-
     const dispatches = await Thunk(uut.fetchPosts).execute();
     expect(dispatches.length).toBe(3);
     expect(dispatches[0].getAction()).toEqual({ type: 'POSTS_LOADING', loading: true });
@@ -173,6 +178,10 @@ describe('posts actions', () => {
     const dispatches = Thunk(uut.filterPosts).withState(state).execute('funny');
     expect(dispatches.length).toBe(1);
     expect(dispatches[0].getAction()).toEqual({ type: 'POSTS_UPDATED', posts: ['funny1', 'funny3'] });
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks().resetModules();
   });
 
 });
@@ -237,17 +246,16 @@ import { FlushThunks } from 'redux-testkit';
 
 import * as reducers from '../reducers';
 import * as postsSelectors from '../posts/reducer';
-import * as uut from '../posts/actions';
 
 describe('posts store integration', () => {
 
-  let store, flushThunks, redditService;
+  let uut, redditService, flushThunks, store;
 
   beforeEach(() => {
-    jest.resetAllMocks();
-    jest.resetModules();
+    // mock redditService and define uut
     jest.mock('../../services/reddit');
     redditService = require('../../services/reddit');
+    uut = require('../posts/actions');
     // create a store with flushThunks added as the first middleware
     flushThunks = FlushThunks.createMiddleware();
     store = createStore(combineReducers(reducers), applyMiddleware(flushThunks, thunk));
@@ -275,6 +283,10 @@ describe('posts store integration', () => {
     await store.dispatch(uut.initApp()); // this dispathces thunk appOnForeground
     await flushThunks.flush(); // wait until all async thunks resolve
     expect(postsSelectors.isForeground(store.getState())).toBe(true);
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks().resetModules();
   });
 
 });
