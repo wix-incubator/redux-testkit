@@ -18,7 +18,6 @@ const thunk2 = () => {
   };
 };
 
-
 const thunk3 = () => {
   return async function action5(dispatch, getState) {
     dispatch(thunk1());
@@ -111,7 +110,7 @@ describe('Thunk teskit tool', () => {
       await uut(actionThatMutateState, state).execute();
       expect(true).toBe(false);
     } catch (error) {
-      expect(error).toEqual(new Error('State mutation is not valid inside an action'));
+      expect(error).toEqual(new Error('state mutated after running the thunk'));
     }
   });
 });

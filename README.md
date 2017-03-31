@@ -157,7 +157,7 @@ import * as uut from '../actions';
 describe('posts actions', () => {
 
   it('should clear all posts', () => {
-    const dispatches = Thunk(uut.clearPosts).execute();
+    const dispatches = await Thunk(uut.clearPosts).execute();
     expect(dispatches.length).toBe(1);
     expect(dispatches[0].getAction()).toEqual({ type: 'POSTS_UPDATED', posts: [] });
   });
@@ -176,7 +176,7 @@ describe('posts actions', () => {
 
   it('should filter posts', () => {
     const state = { loading: false, posts: ['funny1', 'scary2', 'funny3'] };
-    const dispatches = Thunk(uut.filterPosts, state).execute('funny');
+    const dispatches = await Thunk(uut.filterPosts, state).execute('funny');
     expect(dispatches.length).toBe(1);
     expect(dispatches[0].getAction()).toEqual({ type: 'POSTS_UPDATED', posts: ['funny1', 'funny3'] });
   });
@@ -187,15 +187,15 @@ describe('posts actions', () => {
 
 A redux thunk wraps a synchronous or asynchronous function that performs an action. It can dispatch other actions (either plain objects or other thunks). It can also perform side effects like accessing servers.
 
-#### `Thunk(action, state).execute(...args)`
+#### `Thunk(thunk, state).execute(...args)`
 
-* Runs the thunk `action` on current `state` given optional arguments `...args`. The current `state` argument is optional, no need to provide it if the thunk doesn't call `getState()`.
+* Runs the thunk `thunk` on current `state` given optional arguments `...args`. The current `state` argument is optional, no need to provide it if the thunk doesn't call `getState()`.
 
-* Returns an array of dispatches performed by the thunk (shallow, these dispatches are not executed). You can run expectations over them manually.
+* Returns an awaitable array of dispatches performed by the thunk (shallow, these dispatches are not executed). You can run expectations over them manually. Always `await` on the result to get the actual dispatches array.
 
 * Also verifies that `state` did not mutate. [Why is this important? see example bug](BUG-EXAMPLES.md#thunk)
 
-> [See some examples of this API](API-EXAMPLES.md#thunkaction-stateexecuteargs)
+> [See some examples of this API](API-EXAMPLES.md#thunkthunk-stateexecuteargs)
 
 ##### Available expectations over a dispatch
 

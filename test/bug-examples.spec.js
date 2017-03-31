@@ -41,7 +41,7 @@ describe('selector bug', () => {
   });
 });
 
-function reversePostsAction() {
+function reversePostsThunk() {
   return async function(dispatch, getState) {
     const state = getState();
     //the BUG is remarked now
@@ -53,6 +53,8 @@ function reversePostsAction() {
 
 describe('thunk bug', () => {
   it('should not mutate state', async () => {
-    const dispatches = await thunk(reversePostsAction(), {posts: ['post1', 'post2']}).execute();
+    const dispatches = await thunk(reversePostsThunk, {posts: ['post1', 'post2']}).execute();
+    expect(dispatches.length).toBe(1);
+    expect(dispatches[0].getType()).toEqual('UPDATE_POSTS');
   });
 });

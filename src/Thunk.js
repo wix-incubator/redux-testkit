@@ -22,7 +22,7 @@ function getState() {
 
 async function dispatch(action) {
   if (!_.isFunction(action) && !_.isPlainObject(action)) {
-    error = new Error(`Unsupported ${action} action type sent to dispatch`);
+    error = new Error(`unsupported ${action} action type sent to dispatch`);
   }
 
   dispatches.push(createDispatchedObject(action));
@@ -34,15 +34,15 @@ async function executeDispatch(action) {
     return Promise.resolve(result);
   }
 
-  error = new Error('its not a thunk function');
+  error = new Error('provided action is not a thunk function');
   return null;
 }
 
 function checkForStateMutation() {
   const mutated = !utils.deepEqual(state, originalState);
-  
+
   if (mutated) {
-    error = new Error('State mutation is not valid inside an action');
+    error = new Error('state mutated after running the thunk');
   }
 }
 
@@ -59,7 +59,7 @@ export default function(thunkFunction, storeState) {
         await executeDispatch(thunkFunction());
         checkForStateMutation();
       } else {
-        error = new Error('Thunk testkit only accept a thunk function');
+        error = new Error('you must pass a thunk function to Thunk()');
       }
 
       if (error) {
