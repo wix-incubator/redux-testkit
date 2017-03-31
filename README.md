@@ -63,7 +63,6 @@ describe('counter reducer', () => {
   });
 
 });
-
 ```
 
 A redux reducer is a pure function that takes an action object, with a `type` field, and changes the state. In almost every case the state object itself must remain immutable.
@@ -115,7 +114,6 @@ describe('numbers selectors', () => {
   });
 
 });
-
 ```
 
 A redux selector is a pure function that takes the state and computes some derivation from it. This operation is read-only and the state object itself must not change.
@@ -146,8 +144,30 @@ A redux selector is a pure function that takes the state and computes some deriv
 
 ```js
 import { Thunk } from 'redux-testkit';
+import * as uut from '../actions';
 
 describe('posts actions', () => {
+
+  it('should clear all posts', () => {
+    const dispatches = Thunk(uut.clearPosts).execute();
+    expect(dispatches.length).toBe(1);
+    expect(dispatches[0].getAction()).toEqual({ type: 'POSTS_UPDATED', posts: [] });
+  });
+
+  it('should filter posts (async)', async () => {
+    const state = { loading: false, posts: ['funny1', 'scary2', 'funny3'] };
+    const dispatches = await Thunk(uut.filterPosts).withState(state).execute('funny');
+    expect(dispatches.length).toBe(1);
+    expect(dispatches[0].getAction()).toEqual({ type: 'POSTS_UPDATED', posts: ['funny1', 'funny3'] });
+  });
+
+});
+```
+
+```js
+import { Thunk } from 'redux-testkit';
+
+describe('posts actions (with service mock)', () => {
 
   let uut, redditService;
 
@@ -156,12 +176,6 @@ describe('posts actions', () => {
     jest.mock('../../../services/reddit');
     redditService = require('../../../services/reddit');
     uut = require('../actions');
-  });
-
-  it('should clear all posts', () => {
-    const dispatches = Thunk(uut.clearPosts).execute();
-    expect(dispatches.length).toBe(1);
-    expect(dispatches[0].getAction()).toEqual({ type: 'POSTS_UPDATED', posts: [] });
   });
 
   it('should fetch posts from server', async () => {
@@ -173,19 +187,11 @@ describe('posts actions', () => {
     expect(dispatches[2].getAction()).toEqual({ type: 'POSTS_LOADING', loading: false });
   });
 
-  it('should filter posts', () => {
-    const state = { loading: false, posts: ['funny1', 'scary2', 'funny3'] };
-    const dispatches = Thunk(uut.filterPosts).withState(state).execute('funny');
-    expect(dispatches.length).toBe(1);
-    expect(dispatches[0].getAction()).toEqual({ type: 'POSTS_UPDATED', posts: ['funny1', 'funny3'] });
-  });
-
   afterEach(() => {
     jest.resetAllMocks().resetModules();
   });
 
 });
-
 ```
 
 A redux thunk wraps a synchronous or asynchronous function that performs an action. It can dispatch other actions (either plain objects or other thunks). It can also perform side effects like accessing servers.
@@ -290,7 +296,6 @@ describe('posts store integration', () => {
   });
 
 });
-
 ```
 
 Integration test for the entire store creates a real redux store with an extra flushThunks middleware. Test starts by dispatching an action / thunk. Expectations are set over the final state using selectors.

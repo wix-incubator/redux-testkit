@@ -39,7 +39,6 @@ describe('person reducer', () => {
   });
 
 });
-
 ```
 
 Answer: The reducer mutates the state.
@@ -75,7 +74,6 @@ describe('person selectors', () => {
   });
 
 });
-
 ```
 
 Answer: The selector mutates the state.
@@ -112,7 +110,6 @@ describe('posts actions', () => {
   });
 
 });
-
 ```
 
 Answer: The thunk mutates the state.

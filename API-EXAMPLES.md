@@ -94,7 +94,6 @@ describe('numbers selectors', () => {
   });
 
 });
-
 ```
 
 <br>
@@ -115,7 +114,6 @@ describe('numbers selectors', () => {
   });
 
 });
-
 ```
 
 <br>
