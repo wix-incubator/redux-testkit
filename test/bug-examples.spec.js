@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import reducer from '../src/Reducer';
 import selector from '../src/Selector';
+import thunk from '../src/Thunk';
 
 const initialState = {
   names: []
@@ -9,6 +10,7 @@ const initialState = {
 function reduce(state = initialState, action = {}) {
   switch (action.type) {
     case 'ADD_PERSON':
+      //the BUG is remarked now
       //state.names.push(action.addedName);
       //return state;
       return {...state, names: state.names.concat([action.addedName])};
@@ -26,6 +28,7 @@ describe('reducer bug', () => {
 });
 
 function getReverseNames(state) {
+  //the BUG is remarked now
   //return state.names.reverse();
   return _.reverse(_.cloneDeep(state.names));
 }
@@ -35,5 +38,21 @@ describe('selector bug', () => {
     const state = {names: ['John', 'Rob']};
     const result = ['Rob', 'John'];
     selector(getReverseNames).expect(state).toReturn(result);
+  });
+});
+
+function reversePostsAction() {
+  return async function(dispatch, getState) {
+    const state = getState();
+    //the BUG is remarked now
+    //const reversePosts = _.reverse(state.posts);
+    const reversePosts = _.reverse(_.cloneDeep(state.posts));
+    dispatch({type: 'UPDATE_POSTS', posts: reversePosts});
+  };
+}
+
+describe('thunk bug', () => {
+  it('should not mutate state', async () => {
+    const dispatches = await thunk(reversePostsAction(), {posts: ['post1', 'post2']}).execute();
   });
 });

@@ -136,7 +136,7 @@ A redux selector is a pure function that takes the state and computes some deriv
 
 #### `Selector(selector).execute(state, ...args)`
 
-* Runs the `selector` function on a given `state`. If the selector takes more arguments, provide them at `...args` (the state is always assumed to be the first argument of a selector). 
+* Runs the `selector` function on a given `state`. If the selector takes more arguments, provide them at `...args` (the state is always assumed to be the first argument of a selector).
 
 * Returns the returned state so you can run expectations manually.
 
@@ -161,19 +161,19 @@ describe('posts actions', () => {
     expect(dispatches.length).toBe(1);
     expect(dispatches[0].getAction()).toEqual({ type: 'POSTS_UPDATED', posts: [] });
   });
-  
+
   it('should fetch posts from server', async () => {
     jest.mock('../../../services/reddit');
     const redditService = require('../../../services/reddit');
     redditService.getPostsBySubreddit.mockReturnValueOnce(['post1', 'post2']);
-    
+
     const dispatches = await Thunk(uut.fetchPosts).execute();
     expect(dispatches.length).toBe(3);
     expect(dispatches[0].getAction()).toEqual({ type: 'POSTS_LOADING', loading: true });
     expect(dispatches[1].getAction()).toEqual({ type: 'POSTS_UPDATED', posts: ['post1', 'post2'] });
     expect(dispatches[2].getAction()).toEqual({ type: 'POSTS_LOADING', loading: false });
   });
-  
+
   it('should filter posts', () => {
     const state = { loading: false, posts: ['funny1', 'scary2', 'funny3'] };
     const dispatches = Thunk(uut.filterPosts, state).execute('funny');
@@ -193,7 +193,7 @@ A redux thunk wraps a synchronous or asynchronous function that performs an acti
 
 * Returns an array of dispatches performed by the thunk (shallow, these dispatches are not executed). You can run expectations over them manually.
 
-* Also verifies that `state` did not mutate.
+* Also verifies that `state` did not mutate. [Why is this important? see example bug](BUG-EXAMPLES.md#thunk)
 
 > [See some examples of this API](API-EXAMPLES.md#thunkaction-stateexecuteargs)
 
@@ -226,7 +226,7 @@ export function refreshSession() {
 
 * If the tested thunk dispatches another thunk, the other thunk is not executed. Different thunks should be considered as different units. Executing another unit should be part of an [integration test](#recipe---integration-tests-for-the-entire-store), not a unit test.
 
-* If the tested thunk dispatches another thunk, you cannot set expectations on the arguments given to the other thunk. Different thunks should be considered as different units. Testing the interfaces between them should be part of an [integration test](#recipe---integration-tests-for-the-entire-store), not a unit test. 
+* If the tested thunk dispatches another thunk, you cannot set expectations on the arguments given to the other thunk. Different thunks should be considered as different units. Testing the interfaces between them should be part of an [integration test](#recipe---integration-tests-for-the-entire-store), not a unit test.
 
 * If the tested thunk dispatches another thunk, you cannot mock the return value of the other thunk. Relying in your implementation on the return value of another thunk is considered bad practice. If you must test that, you should probably be changing your implementation.
 
@@ -248,7 +248,7 @@ import * as uut from '../posts/actions';
 describe('posts store integration', () => {
 
   let store, flushThunks, redditService;
-  
+
   beforeEach(() => {
     jest.resetAllMocks();
     jest.resetModules();
@@ -258,7 +258,7 @@ describe('posts store integration', () => {
     flushThunks = FlushThunks.createMiddleware();
     store = createStore(combineReducers(reducers), applyMiddleware(flushThunks, thunk));
   });
-  
+
   it('should select posts', () => {
     expect(postsSelectors.getSelectedPost(store.getState())).toEqual([]);
     store.dispatch(uut.selectPost('post1'));
@@ -266,7 +266,7 @@ describe('posts store integration', () => {
     store.dispatch(uut.selectPost('post2'));
     expect(postsSelectors.getSelectedPost(store.getState())).toEqual(['post1', 'post2']);
   });
-  
+
   it('should fetch posts from server', async () => {
     redditService.getPostsBySubreddit.mockReturnValueOnce(['post1', 'post2']);
     expect(postsSelectors.getPostsLoading(store.getState())).toBe(false);

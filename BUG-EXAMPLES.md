@@ -79,3 +79,40 @@ describe('person selectors', () => {
 ```
 
 Answer: The selector mutates the state.
+
+<br>
+
+## Thunk
+
+Can you spot the bug here:
+
+```js
+function reversePosts() {
+  return async function(dispatch, getState) {
+    const state = getState();
+    const reversePosts = _.reverse(state.posts);
+    dispatch({ type: 'UPDATE_POSTS', posts: reversePosts });
+  };
+}
+```
+
+Writing the following test will find it:
+
+```js
+import { Thunk } from 'redux-testkit';
+import * as uut from '../actions';
+
+describe('posts actions', () => {
+
+  it('should reverse the list of posts in state', () => {
+    const state = { posts: ['post1', 'post2'] };
+    const dispatches = await Thunk(reversePosts, state).execute();
+    expect(dispatches.length).toBe(1);
+    expect(dispatches[0].getType()).toEqual('UPDATE_POSTS');
+  });
+
+});
+
+```
+
+Answer: The thunk mutates the state.
