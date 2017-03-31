@@ -49,8 +49,8 @@ const actionThatMutateState = () => {
 };
 
 describe('Thunk teskit tool', () => {
-  it('should contain dispatch actions of plain objects', async () => {
-    const dispatches = await uut(thunk1).execute();
+  it('should contain dispatch actions of plain objects', () => {
+    const dispatches = uut(thunk1).execute();
     expect(dispatches.length).toBe(2);
 
     expect(dispatches[0].isPlainObject()).toBe(true);
@@ -62,8 +62,8 @@ describe('Thunk teskit tool', () => {
     expect(dispatches[1].getAction()).toBe(action2);
   });
 
-  it('should handle dispatched actions of functions and plain objects', async () => {
-    const dispatches = await uut(thunk2).execute();
+  it('should handle dispatched actions of functions and plain objects', () => {
+    const dispatches = uut(thunk2).execute();
     expect(dispatches.length).toBe(2);
 
     expect(dispatches[0].isPlainObject()).toBe(true);

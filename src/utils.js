@@ -21,3 +21,7 @@ export function deepEqual(x, y) {
     return true;
   }
 }
+
+export function isPromise(obj) {
+  return Promise.resolve(obj) === obj;
+}

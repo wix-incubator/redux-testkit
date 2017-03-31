@@ -151,7 +151,7 @@ import * as uut from '../actions';
 describe('posts actions', () => {
 
   it('should clear all posts', () => {
-    const dispatches = await Thunk(uut.clearPosts).execute();
+    const dispatches = Thunk(uut.clearPosts).execute();
     expect(dispatches.length).toBe(1);
     expect(dispatches[0].getAction()).toEqual({ type: 'POSTS_UPDATED', posts: [] });
   });
@@ -170,7 +170,7 @@ describe('posts actions', () => {
 
   it('should filter posts', () => {
     const state = { loading: false, posts: ['funny1', 'scary2', 'funny3'] };
-    const dispatches = await Thunk(uut.filterPosts).withState(state).execute('funny');
+    const dispatches = Thunk(uut.filterPosts).withState(state).execute('funny');
     expect(dispatches.length).toBe(1);
     expect(dispatches[0].getAction()).toEqual({ type: 'POSTS_UPDATED', posts: ['funny1', 'funny3'] });
   });
@@ -185,7 +185,7 @@ A redux thunk wraps a synchronous or asynchronous function that performs an acti
 
 * Runs the thunk `thunk` on current `state` given optional arguments `...args`. Calling `withState()` is optional, no need to provide it if the internal thunk implementation doesn't call `getState()`.
 
-* Returns an awaitable array of dispatches performed by the thunk (shallow, these dispatches are not executed). You can run expectations over them manually. Always `await` on the result to get the actual dispatches array.
+* Returns an array of dispatches performed by the thunk (shallow, these dispatches are not executed). You can run expectations over them manually. If the tested thunk is asynchronous, `await` on the result to get the actual dispatches array. If it's synchronous, you can use the return value directly without `await`.
 
 * Also verifies that `state` did not mutate. [Why is this important? see example bug](BUG-EXAMPLES.md#thunk)
 

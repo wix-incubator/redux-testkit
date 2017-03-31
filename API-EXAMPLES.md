@@ -131,7 +131,7 @@ import * as uut from '../actions';
 describe('posts actions', () => {
 
   it('should clear all posts', () => {
-    const dispatches = await Thunk(uut.clearPosts).execute();
+    const dispatches = Thunk(uut.clearPosts).execute();
     expect(dispatches.length).toBe(1);
     expect(dispatches[0].getType()).toEqual('POSTS_UPDATED');
     expect(dispatches[0].getAction()).toEqual({ type: 'POSTS_UPDATED', posts: [] });
@@ -151,7 +151,7 @@ describe('posts actions', () => {
 
   it('should filter posts', () => {
     const state = { loading: false, posts: ['funny1', 'scary2', 'funny3'] };
-    const dispatches = await Thunk(uut.filterPosts).withState(state).execute('funny');
+    const dispatches = Thunk(uut.filterPosts).withState(state).execute('funny');
     expect(dispatches.length).toBe(1);
     expect(dispatches[0].getAction()).toEqual({ type: 'POSTS_UPDATED', posts: ['funny1', 'funny3'] });
   });

@@ -28,12 +28,10 @@ async function dispatch(action) {
   dispatches.push(createDispatchedObject(action));
 }
 
-async function executeDispatch(action) {
+function executeDispatch(action) {
   if (_.isFunction(action)) {
-    const result = await action(dispatch, getState);
-    return Promise.resolve(result);
+    return action(dispatch, getState);
   }
-
   error = new Error('provided action is not a thunk function');
   return null;
 }
@@ -54,18 +52,26 @@ export default function(thunkFunction) {
 
   function internalThunkCommands() {
     return {
-      execute: async () => {
+      execute: () => {
         if (_.isFunction(thunkFunction)) {
-          await executeDispatch(thunkFunction());
-          checkForStateMutation();
-        } else {
-          error = new Error('you must pass a thunk function to Thunk()');
+          const dispatchResult = executeDispatch(thunkFunction());
+          if (!utils.isPromise(dispatchResult)) {
+            checkForStateMutation();
+            if (error) {
+              throw error;
+            }
+            return dispatches;
+          } else {
+            return dispatchResult.then(() => {
+              checkForStateMutation();
+              if (error) {
+                throw error;
+              }
+              return dispatches;
+            });
+          }
         }
-
-        if (error) {
-          throw error;
-        }
-        return dispatches;
+        throw new Error('you must pass a thunk function to Thunk()');
       }
     };
   }
