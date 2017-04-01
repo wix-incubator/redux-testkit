@@ -11,6 +11,12 @@ const thunk1 = () => {
   };
 };
 
+const thunk1WithArg = (param1, param2) => {
+  return function action3(dispatch, getState) {
+    dispatch({...action1, param1, param2});
+  };
+};
+
 const thunk2 = () => {
   return function action4(dispatch, getState) {
     dispatch(action1);
@@ -60,6 +66,15 @@ describe('Thunk teskit tool', () => {
     expect(dispatches[1].isPlainObject()).toBe(true);
     expect(dispatches[1].getType()).toBe(action2.type);
     expect(dispatches[1].getAction()).toBe(action2);
+  });
+
+  it('should handle arguments', () => {
+    const dispatches = uut(thunk1WithArg).execute('hello', 'world');
+    expect(dispatches.length).toBe(1);
+
+    expect(dispatches[0].isPlainObject()).toBe(true);
+    expect(dispatches[0].getType()).toBe(action1.type);
+    expect(dispatches[0].getAction()).toEqual({...action1, param1: 'hello', param2: 'world'});
   });
 
   it('should handle dispatched actions of functions and plain objects', () => {

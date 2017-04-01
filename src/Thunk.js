@@ -45,9 +45,9 @@ export default function(thunkFunction) {
 
   function internalThunkCommands() {
     return {
-      execute: () => {
+      execute: (...args) => {
         if (_.isFunction(thunkFunction)) {
-          const dispatchResult = executeDispatch(thunkFunction());
+          const dispatchResult = executeDispatch(thunkFunction(...args));
           if (!utils.isPromise(dispatchResult)) {
             checkForStateMutation();
             if (error) {
