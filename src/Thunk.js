@@ -11,7 +11,7 @@ function createDispatchedObject(action) {
   };
 }
 
-export default function(thunkFunction) {
+export default function(thunkFunction, extraArgument) {
   const dispatches = [];
   let state;
   let originalState;
@@ -30,7 +30,7 @@ export default function(thunkFunction) {
 
   function executeDispatch(action) {
     if (_.isFunction(action)) {
-      return action(dispatch, getState);
+      return action(dispatch, getState, extraArgument);
     }
     error = new Error('provided action is not a thunk function');
     return null;
