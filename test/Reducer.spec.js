@@ -140,6 +140,9 @@ describe('Reducer testkit tool', () => {
     it('should fail test with given initial state on mutating reducer', () => {
       // uut(mutatingCounterReducer).withState({value: 6}).expect(SUBTRACT_ACTION).toReturnState({value: 6 - SUBTRACT_ACTION.value});
     });
+    it('should return the same state after accpeting a non existing action', () => {
+      uut(immutableCounterReducer).expect(NON_EXISTING_ACTION).toStayTheSame();
+    });
   });
 
   describe('execute: without allowing mutation of state', () => {

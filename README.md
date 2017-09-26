@@ -62,6 +62,12 @@ describe('counter reducer', () => {
     Reducer(uut).withState(state).expect(action).toReturnState(result);
   });
 
+  it('should return the same state after accpeting a non existing action', () => {
+    const action = { type: 'NON_EXISTING' };
+    const state = { counter: 1 };
+    Reducer(uut).withState(state).expect(action).toStayTheSame();
+  });
+
 });
 ```
 
@@ -74,6 +80,10 @@ A redux reducer is a pure function that takes an action object, with a `type` fi
 * Also verifies immutability - that `state` did not mutate. [Why is this important? see example bug](BUG-EXAMPLES.md#reducer)
 
 > [See some examples of this API](API-EXAMPLES.md#reducerreducerwithstatestateexpectactiontoreturnstateresult)
+
+#### `Reducer(reducer).withState(state).expect(action).toStayTheSame()`
+
+* Runs the `reducer` on current `state` providing an `action`. Calling `withState()` is optional, if not provided, initial state is used. Makes sure the returned state is the same as the provided state.
 
 #### `Reducer(reducer).withState(state).expect(action).toChangeInState(changes)`
 
