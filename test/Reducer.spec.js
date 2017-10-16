@@ -106,15 +106,6 @@ describe('Reducer testkit tool', () => {
       uut(reducerWithExtra).withState({a: {b: [-1, -2, -3]}}).expect(SET_ARRAY_ACTION).toReturnState({a: {b: [1, 2]}});
     });
 
-    it('should fail test if content change overlooked', () => {
-      const originalExpect = global.expect;
-      global.expect = (input) => ({
-        toEqual: (i) => originalExpect(input).not.toEqual(i)
-      });
-      uut(reducerWithExtra).withState({name: 'john'}).expect(SET_ACTION).toChangeInState({});
-      global.expect = originalExpect;
-    });
-
     it('should fail test with given initial state on mutating reducer', () => {
       // uut(mutatingCounterReducer).withState({value: 6}).expect(SUBTRACT_ACTION).toChangeInState({value: 6 - SUBTRACT_ACTION.value});
     });

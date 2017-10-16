@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import {deepEqual} from './utils';
+import {expect} from 'chai';
 
 export default function(selector) {
   return {
@@ -10,7 +11,7 @@ export default function(selector) {
 
       return {
         toReturn: (expected) => {
-          expect(result).toEqual(expected);
+          expect(result).to.deep.equal(expected);
           // expect(mutated).toEqual(false);
           if (mutated) {
             throw new Error('state mutated after running selector');

@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import {deepEqual} from './utils';
+import {expect} from 'chai';
 
 function toChangeInStateCustomizer(objValue, srcValue) {
   if (_.isArray(objValue)) {
@@ -20,14 +21,14 @@ export default function(reducer) {
 
         return {
           toReturnState: (expected) => {
-            expect(newState).toEqual(expected);
+            expect(newState).to.eql(expected);
             // expect(mutated).toEqual(false);
             if (mutated) {
               throw new Error('state mutated after running reducer');
             }
           },
           toStayTheSame: () => {
-            expect(newState).toBe(initialState);
+            expect(newState).to.equal(initialState);
             // expect(mutated).toEqual(false);
             if (mutated) {
               throw new Error('state mutated after running reducer');
@@ -35,7 +36,7 @@ export default function(reducer) {
           },
           toChangeInState: (expectedChanges) => {
             const expected = _.mergeWith(originalState, expectedChanges, toChangeInStateCustomizer);
-            expect(newState).toEqual(expected);
+            expect(newState).to.eql(expected);
             // expect(mutated).toEqual(false);
             if (mutated) {
               throw new Error('state mutated after running reducer');

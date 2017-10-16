@@ -1,15 +1,15 @@
 {
-  "name": "redux-testkit",
-  "version": "1.0.6",
+  "name": "redux-testkit-chai",
+  "version": "1.0.7",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
-  "description": "Complete and opinionated testkit for testing Redux projects (reducers, selectors, actions, thunks)",
-  "author": "Yedidya Kennard <yedidyak@gmail.com>",
+  "description": "Forked from wix redux-testkit package: https://github.com/wix/redux-testkit. Complete and opinionated testkit for testing Redux projects (reducers, selectors, actions, thunks)",
+  "author": "Eugene Alforov <eugenealforov@gmail.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/wix/redux-testkit.git"
+    "url": "https://github.com/Eugen1992/redux-testkit.git"
   },
   "main": "dist/index.js",
   "scripts": {
@@ -20,8 +20,9 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
-    "lodash": "^4.0.0",
-    "babel-polyfill": "^6.8.0"
+    "babel-polyfill": "^6.8.0",
+    "chai": "^4.1.2",
+    "lodash": "^4.0.0"
   },
   "devDependencies": {
     "app-root-path": "^1.0.0",
