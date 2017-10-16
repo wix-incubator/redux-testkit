@@ -28,13 +28,6 @@ This library mostly provides syntactic sugar and makes testing Redux fun with le
 ```
 npm install redux-testkit --save-dev
 ```
-
-* Make sure you have a test runner installed, we recommend [jest](https://facebook.github.io/jest/docs/getting-started.html)
-
-```
-npm install jest --save-dev
-```
-
 <br>
 
 ## Recipe - Unit testing reducers
