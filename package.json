@@ -11,7 +11,7 @@
     "type": "git",
     "url": "https://github.com/wix/redux-testkit.git"
   },
-  "main": "dist/index.js",
+  "main": "src/index.js",
   "scripts": {
     "build": "rm -rf dist && babel src --presets=stage-0,latest,react -d dist",
     "lint": "eslint src test",
